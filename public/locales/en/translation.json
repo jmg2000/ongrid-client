@@ -1,0 +1,159 @@
+{
+  "title": "Welcome to react using react-i18next",
+  "description": {
+    "part1": "To get started, edit <1>src/App.js</1> and save to reload.",
+    "part2": "Switch language between english and german using buttons above."
+  },
+  "navbar": {
+    "info": "Info",
+    "users": "Users",
+    "configurator": "Configurator",
+    "roles": "Roles",
+    "messages": "Messages",
+    "workPlaces": "Work places",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "download": "Download"
+  },
+  "landing": {
+    "login": "Login",
+    "register": "Register",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+  },
+  "login": {
+    "createAccount": "Create an account",
+    "login": "Login",
+    "rememberMe": "Remember me",
+    "yourEmail": "Your Email",
+    "yourPassword": "Your Password"
+  },
+  "register": {
+    "register": "Register",
+    "yourName": "Your Name",
+    "yourEmail": "Your Email",
+    "yourPhone": "Your Phone",
+    "yourPassword": "Your Password",
+    "repeatPassword": "Repeat your password",
+    "iAgree": "I agree all statements in ",
+    "terms": "Terms of service",
+    "iMember": "I am already member"
+  },
+  "client": {
+    "name": "Name",
+    "login": "Login",
+    "phone": "Phone",
+    "web": "Web",
+    "address": "Address",
+    "windFarmCode": "Wind farm code",
+    "windFarmCoord": "Wind farm coodinates",
+    "windFarmManufacturer": "Manufacturer",
+    "windFarmConnectDate": "Farm connect date",
+    "windFarmOperator": "Farm Operator",
+    "windFarmServiceDate": "Next service date",
+    "windFarmDescription": "Description",
+    "save": "Save"
+  },
+  "users": {
+    "create": "Create",
+    "modify": "Modify",
+    "delete": "Delete",
+    "userName": "User name",
+    "login": "Login",
+    "dateCreation": "Date of creation",
+    "dateLogin": "Last login",
+    "group": "Group",
+    "personalRole": "Personal role",
+    "users": "Users",
+    "password": "Password",
+    "role": "Role",
+    "notDefined": "Not defined",
+    "active": "Active",
+    "close": "Close",
+    "save": "Save",
+    "nameForLogin": "Login name",
+    "enterLogin": "Enter login",
+    "enterName": "Enter Name",
+    "editUser": "Edit user",
+    "newUser": "New user"
+  },
+  "usersGroups": {
+    "usersGroups": "Users and groups",
+    "selectRoles": "Choose roles"
+  },
+  "groups": {
+    "newGroup": "New group",
+    "editGroup": "Edit group",
+    "groups": "Groups",
+    "create": "Create",
+    "modify": "Modify",
+    "delete": "Delete",
+    "groupName": "Group name",
+    "availableRoles": "Available roles",
+    "tune": "Tune..."
+  },
+  "rolesPermissions": {
+    "rolesPermissions": "Roles and permissions",
+    "create": "Create",
+    "modify": "Modify",
+    "delete": "Delete",
+    "roleName": "Role name",
+    "description": "Description",
+    "roles": "Roles"
+  },
+  "permissions": {
+    "permissions": "Permissions",
+    "objectName": "Object name"
+  },
+  "configurator": {
+    "objectManager": "Object manager",
+    "objectType": "Object type",
+    "objectDesc": "Object description",
+    "objectName": "Object name",
+    "create": "Create",
+    "delete": "Delete",
+    "properties": "Properties",
+    "events": "Events",
+    "objectProperty": "Object property",
+    "propertyValue": "Property value",
+    "systemProperty": "System Property",
+    "newObject": "New object",
+    "name": "Name",
+    "desc": "Description",
+    "close": "Close",
+    "save": "Save",
+    "fieldType": "Field type",
+    "fieldSize": "Field size"
+  },
+  "configTypes": {
+    "configTitle": "Configuration",
+    "configDesc": "Configuration",
+    "tableTitle": "Tables",
+    "tableDesc": "Documents, reference books, storages",
+    "menuTitle": "Menus",
+    "menuDesc": "Menus and toolbars",
+    "queryTitle": "Queries to the database",
+    "queryDesc": "SQL stored procedures",
+    "templateTitle": "Templates",
+    "templateDesc": "Print and Screen Templates",
+    "fieldTitle": "Fields",
+    "fieldDesc": "Collection of objects FIELD"
+  },
+  "workPlace": {
+    "wpName": "Work place name",
+    "macAddr": "Mac addr",
+    "enable": "Enable",
+    "control": "Control",
+    "delete": "Delete"
+  },
+  "messages": {
+    "to": "To",
+    "from": "From",
+    "addFile": "Add file",
+    "delete": "Delete",
+    "attachFile": "Attach file",
+    "chooseDest": "Choose a destination",
+    "message": "Message",
+    "send": "Send"
+  }
+}

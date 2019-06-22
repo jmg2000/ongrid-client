@@ -1,0 +1,61 @@
+.list-group-item-heading h4 {
+    display: inline;
+}
+
+.list-group-item-heading .glyphicon {
+    margin-right: 1em;
+}
+
+list-group-item:first-child {
+    margin: 0;
+}
+
+list-group-item:last-child {
+    margin: 0;
+}
+
+.list-group-item {
+    margin: 1px 0;
+}
+
+h4 span + span.glyphicon {
+    margin-left: 1em;
+}
+
+.message-body {
+    color: grey;
+    font-weight: normal;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.unreaded {
+    color: black;
+    font-weight: bold;
+}
+
+.unreaded p {
+    color: black;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.unreaded h4 {
+    color: black;
+    font-weight: bold;
+}
+
+.message-createdat {
+    text-align: right;
+}
+
+.list-group-item-heading h4>span {
+    margin-right: 0.5rem;
+}
+
+.panel-heading span {
+    margin-right: 0.5rem;
+}
+
+.panel-heading .message-createdat {
+    margin-left: 2rem;
+}

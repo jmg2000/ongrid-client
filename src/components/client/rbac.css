@@ -1,0 +1,72 @@
+.groups-header {
+  padding: 0.5em;
+}
+
+.users-header {
+  padding: 0.5em;
+}
+
+.roles-header {
+  padding: 0.5em;
+}
+
+.groups table .active {
+  background: #dfe3e6;
+}
+
+.users table .active {
+  background: #dfe3e6;
+}
+
+.configuration table .active {
+  background: #dfe3e6;
+}
+
+.groups table .active {
+  background: #dfe3e6;
+}
+
+.users-groups {
+  margin-bottom: 10rem;
+}
+
+.permissions_objectname {
+  width: 600px;
+}
+
+.img-action {
+  width: 20px;
+  height: 20px;
+}
+
+/* .groups .group-header {
+  display: inline-block;
+  padding-left: 0.5em;
+}
+
+#groups_header h4,
+#users_header h4,
+#roles_header h4,
+#permission_header h4 {
+  display: inline-block;
+  padding-left: 0.5em;
+} */
+
+/* #groups_header .btn-group,
+#users_header .btn-group,
+#roles_header .btn-group,
+#permission_header .btn-group {
+  padding-top: 0.2em;
+} */
+
+/* .table td {
+  padding-top: 0.8em;
+} */
+
+.permissions table img {
+  margin: 0 14px;
+} 
+
+.object-property tbody > tr {
+  font-size: 0.8em;
+}

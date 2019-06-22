@@ -1,0 +1,159 @@
+{
+  "title": "Willkommen zu react und react-i18next",
+  "description": {
+    "part1": "Um loszulegen, ändere <1>src/App(DE).js</1> speicheren und neuladen.",
+    "part2": "Ändere die Sprachen zwischen deutsch und englisch mit Hilfe der beiden Schalter."
+  },
+  "navbar": {
+    "info": "Инфо",
+    "users": "Пользователи",
+    "configurator": "Конфигуратор",
+    "roles": "Роли",
+    "messages": "Сообщения",
+    "workPlaces": "Рабочие места",
+    "login": "Вход",
+    "register": "Регистрация",
+    "logout": "Выход",
+    "download": "Скачать"
+  },
+  "landing": {
+    "login": "Вход",
+    "register": "Регистрация",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+  },
+  "login": {
+    "createAccount": "Создать личный кабинет",
+    "login": "Вход",
+    "rememberMe": "Запомнить меня",
+    "yourEmail": "Ваш email",
+    "yourPassword": "Ваш пароль"
+  },
+  "register": {
+    "register": "Регистрация",
+    "yourName": "Ваше имя",
+    "yourEmail": "Ваш Email",
+    "yourPhone": "Ваш номер телефона",
+    "yourPassword": "Ваш пароль",
+    "repeatPassword": "Повторите пароль",
+    "iAgree": "Я согласен с ",
+    "terms": "Условиями обслуживания",
+    "iMember": "Я уже зарегистрирован"
+  },
+  "client": {
+    "name": "Наименование",
+    "login": "Логин",
+    "phone": "Телефон",
+    "web": "Веб-страница",
+    "address": "Адрес",
+    "windFarmCode": "Код обозначения фермы генераторов",
+    "windFarmCoord": "Координаты фермы генераторов",
+    "windFarmManufacturer": "Производитель",
+    "windFarmConnectDate": "Дата подключения фермы",
+    "windFarmOperator": "Оператор фермы",
+    "windFarmServiceDate": "Дата следующего обслуживания",
+    "windFarmDescription": "Описание",
+    "save": "Сохранить"
+  },
+  "users": {
+    "create": "Создать",
+    "modify": "Править",
+    "delete": "Удалить",
+    "userName": "Имя пользователя",
+    "login": "Логин",
+    "dateCreation": "Дата создания",
+    "dateLogin": "Дата входа",
+    "group": "Группа",
+    "personalRole": "Персональная роль",
+    "users": "Пользователи",
+    "password": "Пароль",
+    "role": "Роль",
+    "notDefined": "Не определена",
+    "active": "Активный",
+    "close": "Закрыть",
+    "save": "Сохранить",
+    "nameForLogin": "Имя для входа в программу",
+    "enterLogin": "Введите логин",
+    "enterName": "Введите имя",
+    "editUser": "Редактирование пользователя",
+    "newUser": "Новый пользователь"
+  },
+  "usersGroups": {
+    "usersGroups": "Пользователи и группы",
+    "selectRoles": "Выберите роли"
+  },
+  "groups": {
+    "newGroup": "Новая группа",
+    "editGroup": "Редактирование группы",
+    "groups": "Группы",
+    "create": "Создать",
+    "modify": "Править",
+    "delete": "Удалить",
+    "groupName": "Наименование группы",
+    "availableRoles": "Доступные роли",
+    "tune": "Настроить..."
+  },
+  "rolesPermissions": {
+    "rolesPermissions": "Роли и разрешения",
+    "create": "Создать",
+    "modify": "Править",
+    "delete": "Удалить",
+    "roleName": "Наименование роли",
+    "description": "Описание",
+    "roles": "Роли"
+  },
+  "permissions": {
+    "permissions": "Разрешения",
+    "objectName": "Наименование объекта"
+  },
+  "configurator": {
+    "objectManager": "Менеджер объектов",
+    "objectType": "Тип объекта",
+    "objectDesc": "Описание объекта",
+    "objectName": "Имя объекта",
+    "create": "Создать",
+    "delete": "Удалить",
+    "properties": "Свойства",
+    "events": "События",
+    "objectProperty": "Свойство объекта",
+    "propertyValue": "Значение свойства",
+    "systemProperty": "Системное свойство",
+    "newObject": "Новый объект",
+    "name": "Имя",
+    "desc": "Описание",
+    "close": "Закрыть",
+    "save": "Сохранить",
+    "fieldType": "Тип поля",
+    "fieldSize": "Размер поля"
+  },
+  "configTypes": {
+    "configTitle": "Конфигурация",
+    "configDesc": "Конфигурация",
+    "tableTitle": "Таблицы",
+    "tableDesc": "Документы, справочники, хранилища",
+    "menuTitle": "Меню",
+    "menuDesc": "Меню и панели инструментов",
+    "queryTitle": "Запросы к БД",
+    "queryDesc": "Хранимые процедуры SQL",
+    "templateTitle": "Шаблоны",
+    "templateDesc": "Шаблоны печатных и экранных форм",
+    "fieldTitle": "Поля",
+    "fieldDesc": "Коллекция объектов ПОЛЕ"
+  },
+  "workPlace": {
+    "wpName": "Имя рабочего места",
+    "macAddr": "Мак адрес",
+    "enable": "Включено",
+    "control": "Управление",
+    "delete": "Удалить"
+  },
+  "messages": {
+    "to": "Кому",
+    "from": "От",
+    "addFile": "Добавить файл",
+    "delete": "Удалить",
+    "attachFile": "Прикрепить файл",
+    "chooseDest": "Выберете адресата",
+    "message": "Сообщение",
+    "send": "Отправить"
+  }
+}

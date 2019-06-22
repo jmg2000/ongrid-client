@@ -1,0 +1,61 @@
+.signup {
+  background: #fff;
+}
+
+.signup .form-control {
+  border: 1px solid #ffffff;
+  border-bottom: 1px solid #ced4da;
+  
+}
+
+.signup .input-group-text {
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  border-bottom: 1px solid #ced4da;
+}
+
+.signup-image-link {
+  margin-left: 5rem;
+}
+
+.signup h2 {
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.signup .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.signup-success {
+  background: #f8f8f8;
+}
+
+.sign-in {
+  background: #fff;
+}
+
+.sign-in .form-control {
+  border: 1px solid #ffffff;
+  border-bottom: 1px solid #ced4da;
+  
+}
+
+.sign-in .input-group-text {
+  background-color: #ffffff;
+  border: 1px solid #ffffff;
+  border-bottom: 1px solid #ced4da;
+}
+
+.sign-in h2 {
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.sign-in .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.signin-image-link {
+  margin-left: 4rem;
+}

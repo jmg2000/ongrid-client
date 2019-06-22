@@ -1,0 +1,32 @@
+[
+    {
+      "id": 10,
+      "title": "configTypes.configTitle",
+      "description": "configTypes.configDesc"
+    },
+    {
+      "id": 1,
+      "title": "configTypes.tableTitle",
+      "description": "configTypes.tableDesc"
+    },
+    {
+      "id": 6,
+      "title": "configTypes.menuTitle",
+      "description": "configTypes.menuDesc"
+    },
+    {
+      "id": 7,
+      "title": "configTypes.queryTitle",
+      "description": "configTypes.queryDesc"
+    },
+    {
+      "id": 4,
+      "title": "configTypes.templateTitle",
+      "description": "configTypes.templateDesc"
+    },
+    {
+      "id": 8,
+      "title": "configTypes.fieldTitle",
+      "description": "configTypes.fieldDesc"
+    }
+  ]
