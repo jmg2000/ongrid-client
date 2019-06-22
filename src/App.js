@@ -40,7 +40,6 @@ axios.defaults.baseURL = window.location.protocol + '//' + window.location.hostn
 
 const createUpdateAuthInterceptor = (http, refreshToken) => error => {
   if (error.response.status !== 401) {
-    console.log('Reject')
     return Promise.reject(error)
   }
   console.log('Iterceptors: ', error)
