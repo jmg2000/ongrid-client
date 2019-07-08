@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import PropEventsBlock from './PropEventsWidget'
 import ReactLoading from 'react-loading'
 import { withNamespaces } from 'react-i18next'
+import { Table } from 'antd'
+
 import {
   fetchConfiguration,
   addConfigurationObject,
@@ -203,7 +205,7 @@ class Configuration extends React.Component {
                   </div>
                 </div>
                 <div className='col-sm-7'>
-                  <table className='table table-sm table-bordered table-hover table-condensed'>
+                  {/* <table className='table table-sm table-bordered table-hover table-condensed'>
                     <thead>
                       <tr>
                         <th>{t('configurator.objectDesc')}</th>
@@ -221,7 +223,8 @@ class Configuration extends React.Component {
                         />
                       ))}
                     </tbody>
-                  </table>
+                  </table> */}
+                  {this.getObjectList(t, objectsList)}
                 </div>
                 <div className='col-md-3'>
                   {selectedEntity && (
@@ -245,6 +248,44 @@ class Configuration extends React.Component {
         />
       </React.Fragment>
     )
+  }
+
+  getObjectList (t, objectsList) {
+    const dataSource = objectsList.map(obj => ({
+      key: obj.id,
+      description: obj.description,
+      name: obj.name,
+      entity: obj
+    }))
+    const columns = [
+      {
+        title: t('configurator.objectDesc'),
+        dataIndex: 'description',
+        key: 'description',
+        width: 150
+      },
+      {
+        title: t('configurator.objectName'),
+        dataIndex: 'name',
+        key: 'name',
+        width: 150
+      }
+    ]
+
+    return <Table 
+      dataSource={dataSource} 
+      columns={columns} 
+      pagination={{ pageSize: 50 }} 
+      scroll={{ y: 560 }}  
+      size='small' 
+      bordered={true} 
+      onRow={(record, rowIndex) => {
+        return {
+          onClick: () => this.handlerEntityClick(record.entity),
+          onDoubleClick: () => this.handlerEntityDblClick(record.entity)
+        }
+      }}
+    />
   }
 
   getBreatcrumbs (t) {

@@ -1,8 +1,9 @@
 {
-  "name": "ongrid-front",
-  "version": "0.2.0",
+  "name": "ongrid-client",
+  "version": "0.3.0",
   "private": true,
   "dependencies": {
+    "antd": "^3.19.7",
     "axios": "^0.18.0",
     "classnames": "^2.2.6",
     "form-data": "^2.3.3",
