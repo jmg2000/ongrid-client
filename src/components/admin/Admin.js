@@ -187,9 +187,10 @@ class Admin extends Component {
         hostPort: '4004'
       })
       .then(res => {
+        console.log(res)
         notification.open({
           message: 'Docker container created',
-          description: 'Docker container is created and launched. Users can use the platform.',
+          description: `Docker container is created and launched. Container id: ${res.docker.containerId}. Users can use the platform.`,
           onClick: () => {
             console.log('Notification Clicked!')
           }
