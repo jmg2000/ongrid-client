@@ -62,12 +62,15 @@ class Admin extends Component {
 
   handleDeleteClient (clientId) {
     const { clients } = this.state
-    axios.delete(`/api/clients/${clientId}`).then(() => {
-      this.setState({
-        clients: clients.filter(c => c.id !== clientId)
+    axios
+      .delete(`/api/clients/${clientId}`)
+      .then(() => {
+        this.setState({
+          clients: clients.filter(c => c.id !== clientId)
+        })
+        message.success('Client deleted')
       })
-      message.success('Client deleted')
-    })
+      .catch(err => console.log(err))
   }
 
   handleCreateDB () {
@@ -188,9 +191,13 @@ class Admin extends Component {
       })
       .then(res => {
         console.log(res)
+        const client = res.data
+        this.setState({ clients: this.state.clients.map(c => c.id === client.id ? client : c )})
         notification.open({
           message: 'Docker container created',
-          description: `Docker container is created and launched. Container id: ${res.docker.containerId}. Users can use the platform.`,
+          description: `Docker container is created and launched. Container id: ${
+            client.docker.containerId
+          }. Users can use the platform.`,
           onClick: () => {
             console.log('Notification Clicked!')
           }
@@ -270,8 +277,13 @@ class Admin extends Component {
                 </div>
                 {client.docker.containerId ? (
                   <div className='client-drawer__docker-descriptions'>
-                    <Descriptions title='Docker' bordered size='small' column={2}>
-                      <Descriptions.Item label='id'>{client.docker.containerId}</Descriptions.Item>
+                    <Descriptions title='Docker' bordered size='small' column={1}>
+                      <Descriptions.Item label='Docker host'>{client.docker.host}</Descriptions.Item>
+                      <Descriptions.Item label='Id'>{client.docker.containerId}</Descriptions.Item>
+                      <Descriptions.Item label='Name'>{client.docker.containerName}</Descriptions.Item>
+                      <Descriptions.Item label='Created'>
+                        {moment(client.docker.created).format('DD/MM/YYYY HH:mm')}
+                      </Descriptions.Item>
                     </Descriptions>
                   </div>
                 ) : (
