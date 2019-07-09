@@ -14,9 +14,13 @@ import {
   Col,
   List,
   Avatar,
-  Descriptions
+  Descriptions,
+  notification
 } from 'antd'
 import moment from 'moment'
+
+// styles
+import './admin.css'
 
 const { Option } = Select
 
@@ -30,7 +34,8 @@ class Admin extends Component {
       configurations: [],
       curClient: null,
       databaseCreation: false,
-      showProfile: false
+      showProfile: false,
+      containerCreating: false
     }
     this.handleDeleteClient = this.handleDeleteClient.bind(this)
     this.handleCreateDB = this.handleCreateDB.bind(this)
@@ -172,8 +177,42 @@ class Admin extends Component {
     this.setState({ curClient: this.state.clients.find(client => client.id === clientId) })
   }
 
+  handlerContainerCreate = client => {
+    console.log('Create')
+    this.setState({ containerCreating: true })
+    axios
+      .post('/api/docker/create-container', {
+        image: 'ongrid-core',
+        containerName: `ongrid-core-${client.id}`,
+        hostPort: '4004'
+      })
+      .then(res => {
+        notification.open({
+          message: 'Docker container created',
+          description: 'Docker container is created and launched. Users can use the platform.',
+          onClick: () => {
+            console.log('Notification Clicked!')
+          }
+        })
+      })
+      .catch(err => console.log(err))
+      .finally(() => this.setState({ containerCreating: false }))
+  }
+
+  handleDrawerVisibleChange = visible => {
+    console.log(visible)
+  }
+
   render () {
-    const { clients, showConfigurationSelect, configurations, databaseCreation, curClient: client } = this.state
+    const {
+      clients,
+      showConfigurationSelect,
+      configurations,
+      databaseCreation,
+      curClient: client,
+      containerCreating
+    } = this.state
+
     return (
       <React.Fragment>
         <div className='container'>
@@ -195,7 +234,7 @@ class Admin extends Component {
           >
             <Select defaultValue='Select configuration' style={{ width: 450 }} onChange={this.handlerChangeSelectModal}>
               {configurations.map(config => (
-                <Option value={config.id}>{`${config.name} (${config.description})`}</Option>
+                <Option key={config.id} value={config.id}>{`${config.name} (${config.description})`}</Option>
               ))}
             </Select>
           </Modal>
@@ -206,20 +245,47 @@ class Admin extends Component {
               closable={false}
               onClose={this.handleCloseProfile}
               visible={this.state.showProfile}
+              afterVisibleChange={this.handleDrawerVisibleChange}
             >
-              <Avatar style={{ marginTop: '58px' }} src={client.avatar} />
-              <Descriptions bordered title='Client Profile' size='small' column={2}>
-                <Descriptions.Item label='ID'>{client.id}</Descriptions.Item>
-                <Descriptions.Item label='Admin'>{client.admin ? 'yes' : 'no'}</Descriptions.Item>
-                <Descriptions.Item label='Login'>{client.email}</Descriptions.Item>
-                <Descriptions.Item label='Created'>{moment(client.created).format('DD/MM/YYYY')}</Descriptions.Item>
-                <Descriptions.Item label='Name'>{`${client.firstName} ${client.lastName}`}</Descriptions.Item>
-                <Descriptions.Item label='Max work places'>{client.maxWorkPlaces}</Descriptions.Item>
-                <Descriptions.Item label='DataDB'>{client.database.dataFile}</Descriptions.Item>
-                <Descriptions.Item label='Phone'>{client.phone}</Descriptions.Item>
-                <Descriptions.Item label='ConfigDB'>{client.database.configFile}</Descriptions.Item>
-                <Descriptions.Item label='Description'>{client.description}</Descriptions.Item>
-              </Descriptions>
+              <div className='client-drawer'>
+                <Avatar src={client.avatar} />
+                <div className='client-drawer__profile-descriptions'>
+                  <Descriptions bordered title='Client Profile' size='small' column={2}>
+                    <Descriptions.Item label='ID'>{client.id}</Descriptions.Item>
+                    <Descriptions.Item label='Admin'>{client.admin ? 'yes' : 'no'}</Descriptions.Item>
+                    <Descriptions.Item label='Login'>{client.email}</Descriptions.Item>
+                    <Descriptions.Item label='Created'>{moment(client.created).format('DD/MM/YYYY')}</Descriptions.Item>
+                    <Descriptions.Item label='Name'>{`${client.firstName} ${client.lastName}`}</Descriptions.Item>
+                    <Descriptions.Item label='Max work places'>{client.maxWorkPlaces}</Descriptions.Item>
+                    <Descriptions.Item label='Phone'>{client.phone}</Descriptions.Item>
+                    <Descriptions.Item label='Description'>{client.description}</Descriptions.Item>
+                  </Descriptions>
+                </div>
+                <div className='client-drawer__database-descriptions'>
+                  <Descriptions bordered title='Databases' size='small' column={1}>
+                    <Descriptions.Item label='DataDB'>{client.database.dataFile}</Descriptions.Item>
+                    <Descriptions.Item label='ConfigDB'>{client.database.configFile}</Descriptions.Item>
+                  </Descriptions>
+                </div>
+                {client.docker.containerId ? (
+                  <div className='client-drawer__docker-descriptions'>
+                    <Descriptions title='Docker' bordered size='small' column={2}>
+                      <Descriptions.Item label='id'>{client.docker.containerId}</Descriptions.Item>
+                    </Descriptions>
+                  </div>
+                ) : (
+                  <div className='client-drawer__docker-create'>
+                    <p>No docker container</p>
+                    <Button
+                      type='primary'
+                      loading={containerCreating}
+                      onClick={() => this.handlerContainerCreate(client)}
+                    >
+                      Create
+                    </Button>
+                  </div>
+                )}
+              </div>
             </Drawer>
           )}
         </div>

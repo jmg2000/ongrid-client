@@ -1,0 +1,19 @@
+.client-drawer {
+  padding-top: 0px
+}
+
+.client-drawer__profile-descriptions {
+  margin-top: 10px;
+}
+
+.client-drawer__database-descriptions {
+  margin-top: 20px;
+}
+
+.client-drawer__docker-descriptions {
+  margin-top: 20px;
+}
+
+.client-drawer__docker-create {
+  margin-top: 10px;
+}
