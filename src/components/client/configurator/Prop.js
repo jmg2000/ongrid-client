@@ -22,8 +22,8 @@ class Property extends React.Component {
     return null
   }
 
-  saveProperty = (property) => {
-    const {entity, onAddObjectProp, onModifyObjectProp} = this.props
+  saveProperty = property => {
+    const { entity } = this.props
     console.log(property)
     const object = {
       id: property.objectId,
@@ -35,36 +35,40 @@ class Property extends React.Component {
       owner: entity.id
     }
     if (property.objectId) {
-      onModifyObjectProp(object)
+      this.props.modifyObjectProp(object)
     } else {
-      onAddObjectProp(object)
+      this.props.addObjectProp(object)
     }
   }
 
-  handleValueChange = (event) => {
-    const {property} = this.state
+  handleValueChange = event => {
+    const { property } = this.state
+
     console.log('ValueOnChange:', event.target.value)
     if (property.valueType === 'filename' || property.valueType === 'picture') {
       const resourceFileName = event.target.value.replace(/^.*[\\\/]/, '')
-      this.setState({property: {...property, paramValue: resourceFileName}})
-      axios.post('/api/resource', new FormData(this.refs.form)).then(() => {
-        this.saveProperty(this.state.property)
-      })
+      this.setState({ property: { ...property, paramValue: resourceFileName } })
+      axios
+        .post('/api/resource', new FormData(this.refs.form))
+        .then(() => {
+          this.saveProperty(this.state.property)
+        })
+        .catch(err => console.log(err))
     } else {
-      this.setState({property: {...property, paramValue: event.target.value}})
+      this.setState({ property: { ...property, paramValue: event.target.value } })
     }
   }
 
   // метод вызывается когда перешли на другое свойство и измененное св-во надо сохранить
   handleOnBlur (event) {
-    const {property} = this.state
+    const { property } = this.state
     console.log(property)
     this.saveProperty(property)
   }
 
   render () {
-    const {editMode, onClick} = this.props
-    const {property} = this.state
+    const { editMode, onClick } = this.props
+    const { property } = this.state
     return (
       <tr className={property.default ? '' : 'text-primary'}>
         <td>{property.name}</td>
@@ -76,22 +80,33 @@ class Property extends React.Component {
   }
 
   getInputByType (type) {
-    const {property} = this.state
+    const { property } = this.state
     switch (type) {
       case 'string':
       case 'int':
       case 'font':
       case 'set':
-        return <input type='text' value={property.paramValue} onChange={this.handleValueChange} onBlur={this.handleOnBlur} />
+        return (
+          <input type='text' value={property.paramValue} onChange={this.handleValueChange} onBlur={this.handleOnBlur} />
+        )
       case 'bool':
       case 'enum':
         return (
-          <select value={property.paramValue} onChange={this.handleValueChange} onBlur={this.handleOnBlur} >
-            {property.values.map((val, i) => <option key={i}>{val}</option>)}
+          <select value={property.paramValue} onChange={this.handleValueChange} onBlur={this.handleOnBlur}>
+            {property.values.map((val, i) => (
+              <option key={i}>{val}</option>
+            ))}
           </select>
         )
       case 'color':
-        return <input type='color' value={property.paramValue} onChange={this.handleValueChange} onBlur={this.handleOnBlur} />
+        return (
+          <input
+            type='color'
+            value={property.paramValue}
+            onChange={this.handleValueChange}
+            onBlur={this.handleOnBlur}
+          />
+        )
       case 'filename':
       case 'picture':
         return (
@@ -117,13 +132,7 @@ Property.propTypes = {
   onClick: PropTypes.func
 }
 
-const mapDispatchToProps = dispatch => ({
-  onModifyObjectProp (property) {
-    dispatch(modifyObjectProp(property))
-  },
-  onAddObjectProp (property) {
-    dispatch(addObjectProp(property))
-  }
-})
-
-export default connect(null, mapDispatchToProps)(Property)
+export default connect(
+  null,
+  { modifyObjectProp, addObjectProp }
+)(Property)

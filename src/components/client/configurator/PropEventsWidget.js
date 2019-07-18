@@ -3,11 +3,19 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { withNamespaces } from 'react-i18next'
+import { Table, Tabs } from 'antd'
+import { Nav, NavItem, NavLink, TabContent } from 'reactstrap'
+// components
+import SystemProps from './SystemProps'
 import Property from './Prop'
 import Event from './Event'
+import EditableTable from './EditableTable'
+// actions
 import { fetchProps } from '../../../actions/propsActions'
-import { Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap'
-import SystemProps from './SystemProps'
+
+const { TabPane } = Tabs
+
+const objectsPropsName = ['ID', 'Name', 'Description', 'Tag']
 
 class PropEventsBlock extends Component {
   constructor (props) {
@@ -22,10 +30,11 @@ class PropEventsBlock extends Component {
   }
 
   componentDidMount () {
-    this.props.loadProps(this.props.entity.id)
+    this.props.fetchProps(this.props.entity.id)
   }
 
   handlePropertyClick (property) {
+    console.log('handlePropertyClick')
     this.setState({ selectedProperty: property })
   }
 
@@ -36,6 +45,51 @@ class PropEventsBlock extends Component {
   render () {
     const { selectedProperty, activeTab } = this.state
     const { onEntityChange, entity, t } = this.props
+    const columns = [
+      {
+        title: t('configurator.objectProperty'),
+        dataIndex: 'property',
+        width: '50%'
+      },
+      {
+        title: t('configurator.propertyValue'),
+        dataIndex: 'value',
+        width: '50%',
+        editable: true
+      }
+    ]
+
+    let dataSource = objectsPropsName.map((item, idx) => ({
+      key: idx,
+      property: item,
+      value: entity[item.toLowerCase()]
+    }))
+
+    dataSource = [...dataSource, ...this.getProperties().map(item => ({
+      key: item.id,
+      property: item.name,
+      value: item.paramValue,
+      valueType: item.valueType,
+      values: item.values
+    }))]
+
+    return (
+      <Tabs defaultActiveKey={activeTab} type='card' onChange={this.handleTabSelect}>
+        <TabPane tab={t('configurator.properties')} key='1'>
+          <EditableTable columns={columns} dataSource={dataSource} />
+          {console.log(this.getProperties())}
+        </TabPane>
+        <TabPane tab={t('configurator.events')} key='2'>
+          <Table bordered size='small' />
+        </TabPane>
+      </Tabs>
+    )
+  }
+
+  render1 () {
+    const { selectedProperty, activeTab } = this.state
+    const { onEntityChange, entity, t } = this.props
+
     return (
       <React.Fragment>
         <Nav tabs>
@@ -63,7 +117,7 @@ class PropEventsBlock extends Component {
                 <tr className='active'>
                   <td className='text-uppercase'>{t('configurator.systemProperty')}</td>
                 </tr>
-                <SystemProps entity={entity} onEntityChange={onEntityChange} />
+                <SystemProps entity={entity} />
                 <tr className='active'>
                   <td className='text-uppercase'>{t('configurator.objectProperty')}</td>
                 </tr>
@@ -154,22 +208,15 @@ PropEventsBlock.propTypes = {
     })
   ).isRequired,
   properties: PropTypes.array,
-  events: PropTypes.array,
-  onEntityChange: PropTypes.func
+  events: PropTypes.array
 }
 
 const mapStateToProps = state => ({
   properties: state.currentProps.properties,
-  events: state.currentProps.events,
-})
-
-const mapDispatchToProps = dispatch => ({
-  loadProps (objectId) {
-    dispatch(fetchProps(objectId))
-  }
+  events: state.currentProps.events
 })
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  { fetchProps }
 )(withNamespaces('translation')(PropEventsBlock))

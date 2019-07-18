@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import PropEventsBlock from './PropEventsWidget'
 import ReactLoading from 'react-loading'
 import { withNamespaces } from 'react-i18next'
-import { Table } from 'antd'
+import { Table, PageHeader, Breadcrumb, Icon, List, Button } from 'antd'
 
 import {
   fetchConfiguration,
@@ -18,6 +18,8 @@ import './configurator.css'
 import folders from './objecttypes.json'
 
 const getDefaultProps = () => axios.get('/api/configuration/default-props')
+
+const ButtonGroup = Button.Group
 
 class Configuration extends React.Component {
   constructor (props) {
@@ -85,7 +87,6 @@ class Configuration extends React.Component {
       entityChain: [],
       selectedEntity: null,
       parentEntity: null
-      // objectsList: this.props.configuration.filter(object => object.type === id && object.owner === 0)
     })
   }
 
@@ -115,7 +116,6 @@ class Configuration extends React.Component {
             name: entity.name
           }
         ]
-        // objectsList: configuration.filter(object => object.owner === entity.id)
       })
     }
   }
@@ -124,6 +124,7 @@ class Configuration extends React.Component {
   handleDeleteEntity () {
     const { selectedEntity } = this.state
     this.props.deleteConfigurationObject(selectedEntity.id)
+    //this.props.removeConfigurationObject(selectedEntity.id)
   }
 
   // нажате на кнопку "Создать"
@@ -145,6 +146,7 @@ class Configuration extends React.Component {
       owner
     }
     newConfigurationObject(object)
+    //this.props.addConfigurationObject(object)
   }
 
   handleShowModal = () => {
@@ -163,7 +165,7 @@ class Configuration extends React.Component {
       <React.Fragment>
         {loading ? (
           <div className='loader'>
-            <ReactLoading type='spinningBubbles' color='#007bff' height={'20%'} width={'20%'} />
+            <ReactLoading type='spinningBubbles' color='#007bff' height={'15%'} width={'15%'} />
           </div>
         ) : (
           <div className='container-fluid'>
@@ -177,13 +179,15 @@ class Configuration extends React.Component {
                   <div className='row'>
                     <div className='col-sm-8'>{this.getBreatcrumbs(t)}</div>
                     <div className='col-sm-4'>
-                      <div className='btn-group float-right' role='group'>
-                        <button type='button' className='btn btn-primary' onClick={this.handleShowModal}>
-                          {t('configurator.create')}
-                        </button>
-                        <button type='button' className='btn btn-danger' onClick={this.handleDeleteEntity}>
-                          {t('configurator.delete')}
-                        </button>
+                      <div className='float-right'>
+                        <ButtonGroup>
+                          <Button type='primary' onClick={this.handleShowModal}>
+                            {t('configurator.create')}
+                          </Button>
+                          <Button type='danger' onClick={this.handleDeleteEntity}>
+                            {t('configurator.delete')}
+                          </Button>
+                        </ButtonGroup>
                       </div>
                     </div>
                   </div>
@@ -192,47 +196,33 @@ class Configuration extends React.Component {
               </div>
               <div className='row'>
                 <div className='col-sm-2'>
-                  <div className='list-group'>
-                    {folders.map(f => (
-                      <Folder
-                        key={f.id}
-                        folder={f}
-                        onFolderClick={this.handlerFolderSelect}
-                        active={f.id === curFolder}
-                        t={t}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div className='col-sm-7'>
-                  {/* <table className='table table-sm table-bordered table-hover table-condensed'>
-                    <thead>
-                      <tr>
-                        <th>{t('configurator.objectDesc')}</th>
-                        <th>{t('configurator.objectName')}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {objectsList.map(object => (
-                        <ObjectRow
-                          key={object.id}
-                          entity={object}
-                          selected={selectedEntity && selectedEntity.id === object.id}
-                          onEntityClick={this.handlerEntityClick}
-                          onEntityDblClick={this.handlerEntityDblClick}
+                  <List
+                    bordered
+                    dataSource={folders}
+                    renderItem={item => (
+                      <List.Item>
+                        <Icon type={item.icon} />
+                        <List.Item.Meta
+                          avatar={<Icon type={item.icon} />}
+                          title={
+                            <a href='#' onClick={() => this.handlerFolderSelect(item.id)}>
+                              {t(item.title)}
+                            </a>
+                          }
+                          description={t(item.description)}
                         />
-                      ))}
-                    </tbody>
-                  </table> */}
-                  {this.getObjectList(t, objectsList)}
+                      </List.Item>
+                    )}
+                  />
                 </div>
+                <div className='col-sm-7'>{this.getObjectList(t, objectsList)}</div>
                 <div className='col-md-3'>
                   {selectedEntity && (
                     <PropEventsBlock
                       key={selectedEntity.id}
                       entity={selectedEntity}
                       defaultProps={defaultProps}
-                      onEntityChange={this.handleOnEntityChange}
+                      //onEntityChange={this.handleOnEntityChange}
                     />
                   )}
                 </div>
@@ -257,6 +247,7 @@ class Configuration extends React.Component {
       name: obj.name,
       entity: obj
     }))
+
     const columns = [
       {
         title: t('configurator.objectDesc'),
@@ -272,64 +263,40 @@ class Configuration extends React.Component {
       }
     ]
 
-    return <Table 
-      dataSource={dataSource} 
-      columns={columns} 
-      pagination={{ pageSize: 50 }} 
-      scroll={{ y: 560 }}  
-      size='small' 
-      bordered={true} 
-      onRow={(record, rowIndex) => {
-        return {
-          onClick: () => this.handlerEntityClick(record.entity),
-          onDoubleClick: () => this.handlerEntityDblClick(record.entity)
-        }
-      }}
-    />
+    return (
+      <Table
+        dataSource={dataSource}
+        columns={columns}
+        pagination={{ pageSize: 50 }}
+        scroll={{ y: 560 }}
+        size='small'
+        bordered
+        onRow={(record, rowIndex) => {
+          return {
+            onClick: () => this.handlerEntityClick(record.entity),
+            onDoubleClick: () => this.handlerEntityDblClick(record.entity)
+          }
+        }}
+      />
+    )
   }
 
   getBreatcrumbs (t) {
     const { entityChain, curFolder } = this.state
     return (
-      <nav aria-label='breadcrumb'>
-        <ol className='breadcrumb'>
-          <li className={entityChain.length === 0 ? 'breadcrumb-item active' : 'breadcrumb-item'}>
-            <a href='#' onClick={() => this.handlerFolderSelect(curFolder)}>
-              {curFolder !== null && t(folders.filter(f => f.id === curFolder)[0].title)}
-            </a>
-          </li>
-          {entityChain.map((entity, i) => (
-            <li key={entity.id} className={i === entityChain.length - 1 ? 'breadcrumb-item active' : 'breadcrumb-item'}>
-              <a href='#'>{entity.name}</a>
-            </li>
-          ))}
-        </ol>
-      </nav>
+      <Breadcrumb>
+        <Breadcrumb.Item>
+          <a href='#' onClick={() => this.handlerFolderSelect(curFolder)}>
+            {curFolder !== null && t(folders.filter(f => f.id === curFolder)[0].title)}
+          </a>
+        </Breadcrumb.Item>
+        {entityChain.map((entity, i) => (
+          <Breadcrumb.Item key={entity.id}>{entity.name}</Breadcrumb.Item>
+        ))}
+      </Breadcrumb>
     )
   }
 }
-
-const Folder = ({ folder, onFolderClick, active, t }) => (
-  <button
-    type='button'
-    className={active ? 'list-group-item active' : 'list-group-item'}
-    onClick={() => onFolderClick(folder.id)}
-  >
-    <h5 className='list-group-item-heading'>{t(folder.title)}</h5>
-    <p className='list-group-item-text'>{t(folder.description)}</p>
-  </button>
-)
-
-const ObjectRow = ({ entity, selected, onEntityClick, onEntityDblClick }) => (
-  <tr
-    className={selected ? 'active' : ''}
-    onClick={() => onEntityClick(entity)}
-    onDoubleClick={() => onEntityDblClick(entity)}
-  >
-    <td>{entity.description}</td>
-    <td>{entity.name}</td>
-  </tr>
-)
 
 const mapStateToProps = state => ({
   configuration: state.configuration.items,
