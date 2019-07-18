@@ -185,13 +185,14 @@ class Admin extends Component {
     this.setState({ containerCreating: true })
     axios
       .post('/api/docker/create-container', {
+        clientId: client.id,
         image: 'ongrid-core',
         containerName: `ongrid-core-${client.id}`,
         hostPort: '4004'
       })
       .then(res => {
-        console.log(res)
         const client = res.data
+        console.log('Client:', client)
         this.setState({ clients: this.state.clients.map(c => c.id === client.id ? client : c )})
         notification.open({
           message: 'Docker container created',
