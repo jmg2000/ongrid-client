@@ -124,7 +124,7 @@ class Configuration extends React.Component {
   handleDeleteEntity () {
     const { selectedEntity } = this.state
     this.props.deleteConfigurationObject(selectedEntity.id)
-    //this.props.removeConfigurationObject(selectedEntity.id)
+    // this.props.removeConfigurationObject(selectedEntity.id)
   }
 
   // нажате на кнопку "Создать"
@@ -146,7 +146,7 @@ class Configuration extends React.Component {
       owner
     }
     newConfigurationObject(object)
-    //this.props.addConfigurationObject(object)
+    // this.props.addConfigurationObject(object)
   }
 
   handleShowModal = () => {
@@ -222,7 +222,7 @@ class Configuration extends React.Component {
                       key={selectedEntity.id}
                       entity={selectedEntity}
                       defaultProps={defaultProps}
-                      //onEntityChange={this.handleOnEntityChange}
+                      // onEntityChange={this.handleOnEntityChange}
                     />
                   )}
                 </div>
@@ -253,13 +253,33 @@ class Configuration extends React.Component {
         title: t('configurator.objectDesc'),
         dataIndex: 'description',
         key: 'description',
-        width: 150
+        width: 150,
+        sorter: (a, b) => {
+          const nameA = a.description.toLowerCase()
+            const nameB = b.description.toLowerCase()
+          if (nameA < nameB)
+          // sort string ascending
+          { return -1 }
+          if (nameA > nameB) return 1
+          return 0
+        },
+        sortDirections: ['descend', 'ascend']
       },
       {
         title: t('configurator.objectName'),
         dataIndex: 'name',
         key: 'name',
-        width: 150
+        width: 150,
+        sorter: (a, b) => {
+          const nameA = a.name.toLowerCase()
+            const nameB = b.name.toLowerCase()
+          if (nameA < nameB)
+          // sort string ascending
+          { return -1 }
+          if (nameA > nameB) return 1
+          return 0
+        },
+        sortDirections: ['descend', 'ascend']
       }
     ]
 
