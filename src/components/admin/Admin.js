@@ -36,7 +36,12 @@ class Admin extends Component {
       databaseCreation: false,
       showProfile: false,
       containerCreating: false,
-      startingContainer: false
+      startingContainer: false,
+      stopingContainer: false,
+      pausingContainer: false,
+      unpausingContainer: false,
+      restartingContainer: false,
+      removingContainer: false
     }
     this.handleDeleteClient = this.handleDeleteClient.bind(this)
     this.handleCreateDB = this.handleCreateDB.bind(this)
@@ -260,6 +265,39 @@ class Admin extends Component {
       .catch(err => console.log(err))
   }
 
+  handlePauseContainer = client => {
+    this.setState({ pausingContainer: true })
+    axios
+      .post(`/api/docker/pause-container/${client.docker.containerId}`)
+      .then(res => {
+        this.setState({ pausingContainer: false })
+        this.handlerRowClick(client.id)
+      })
+      .catch(err => console.log(err))
+  }
+
+  handleUnpauseContainer = client => {
+    this.setState({ unpausingContainer: true })
+    axios
+      .post(`/api/docker/unpause-container/${client.docker.containerId}`)
+      .then(res => {
+        this.setState({ unpausingContainer: false })
+        this.handlerRowClick(client.id)
+      })
+      .catch(err => console.log(err))
+  }
+
+  handleRestartContainer = client => {
+    this.setState({ restartingContainer: true })
+    axios
+      .post(`/api/docker/restart-container/${client.docker.containerId}`)
+      .then(res => {
+        this.setState({ restartingContainer: false })
+        this.handlerRowClick(client.id)
+      })
+      .catch(err => console.log(err))
+  }
+
   render () {
     const {
       clients,
@@ -341,9 +379,25 @@ class Admin extends Component {
                     </Descriptions>
                     <Button.Group>
                       <Button
+                        type='default'
+                        loading={this.state.pausingContainer}
+                        onClick={() => this.handlePauseContainer(client)}
+                        disabled={client.docker.status === 'exited' || client.docker.status === 'paused'}
+                      >
+                        Pause
+                      </Button>
+                      <Button
+                        type='default'
+                        loading={this.state.unpausingContainer}
+                        onClick={() => this.handleUnpauseContainer(client)}
+                        disabled={client.docker.status === 'exited' || client.docker.status === 'running'}
+                      >
+                        Unpause
+                      </Button>
+                      <Button
                         type='primary'
                         loading={this.state.startingContainer}
-                        disabled={client.docker.status === 'Running'}
+                        disabled={client.docker.status === 'running' || client.docker.status === 'paused'}
                         onClick={() => this.handleStartContainer(client)}
                       >
                         Start
@@ -351,10 +405,17 @@ class Admin extends Component {
                       <Button
                         type='danger'
                         loading={this.state.stopingContainer}
-                        disabled={client.docker.status === 'Paused'}
+                        disabled={client.docker.status === 'exited'}
                         onClick={() => this.handleStopContainer(client)}
                       >
                         Stop
+                      </Button>
+                      <Button
+                        type='default'
+                        loading={this.state.restartingContainer}
+                        onClick={() => this.handleRestartContainer(client)}
+                      >
+                        Restart
                       </Button>
                     </Button.Group>
                   </div>
