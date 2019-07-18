@@ -35,7 +35,8 @@ class Admin extends Component {
       curClient: null,
       databaseCreation: false,
       showProfile: false,
-      containerCreating: false
+      containerCreating: false,
+      startingContainer: false
     }
     this.handleDeleteClient = this.handleDeleteClient.bind(this)
     this.handleCreateDB = this.handleCreateDB.bind(this)
@@ -237,6 +238,28 @@ class Admin extends Component {
     console.log(visible)
   }
 
+  handleStartContainer = client => {
+    this.setState({ startingContainer: true })
+    axios
+      .post(`/api/docker/start-container/${client.docker.containerId}`)
+      .then(res => {
+        this.setState({ startingContainer: false })
+        this.handlerRowClick(client.id)
+      })
+      .catch(err => console.log(err))
+  }
+
+  handleStopContainer = client => {
+    this.setState({ stopingContainer: true })
+    axios
+      .get(`/api/docker/stop-container/${client.docker.containerId}`)
+      .then(res => {
+        this.setState({ stopingContainer: false })
+        this.handlerRowClick(client.id)
+      })
+      .catch(err => console.log(err))
+  }
+
   render () {
     const {
       clients,
@@ -312,8 +335,28 @@ class Admin extends Component {
                       </Descriptions.Item>
                       <Descriptions.Item label='Status'>{client.docker.status}</Descriptions.Item>
                       <Descriptions.Item label='Pid'>{client.docker.pid}</Descriptions.Item>
-                      <Descriptions.Item label='Started'>{client.docker.startedAt}</Descriptions.Item>
+                      <Descriptions.Item label='Started'>
+                        {moment(client.docker.startedAt).format('DD/MM/YYYY HH:mm:ss')}
+                      </Descriptions.Item>
                     </Descriptions>
+                    <Button.Group>
+                      <Button
+                        type='primary'
+                        loading={this.state.startingContainer}
+                        disabled={client.docker.status === 'Running'}
+                        onClick={() => this.handleStartContainer(client)}
+                      >
+                        Start
+                      </Button>
+                      <Button
+                        type='danger'
+                        loading={this.state.stopingContainer}
+                        disabled={client.docker.status === 'Paused'}
+                        onClick={() => this.handleStopContainer(client)}
+                      >
+                        Stop
+                      </Button>
+                    </Button.Group>
                   </div>
                 ) : (
                   <div className='client-drawer__docker-create'>
