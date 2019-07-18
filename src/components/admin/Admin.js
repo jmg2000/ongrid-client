@@ -193,7 +193,10 @@ class Admin extends Component {
       .then(res => {
         const client = res.data
         console.log('Client:', client)
-        this.setState({ clients: this.state.clients.map(c => c.id === client.id ? client : c )})
+        this.setState({ 
+          clients: this.state.clients.map(c => c.id === client.id ? client : c ),
+          curClient: client
+        })
         notification.open({
           message: 'Docker container created',
           description: `Docker container is created and launched. Container id: ${
