@@ -177,7 +177,29 @@ class Admin extends Component {
   }
 
   handlerRowClick = clientId => {
-    this.setState({ curClient: this.state.clients.find(client => client.id === clientId) })
+    const curClient = this.state.clients.find(client => client.id === clientId)
+
+    if (curClient.docker.containerId) {
+      axios
+        .get(`/api/docker/inspect/${curClient.docker.containerId}`)
+        .then(res => {
+          const containerState = res.data.State
+          this.setState({
+            curClient: {
+              ...curClient,
+              docker: {
+                ...curClient.docker,
+                status: containerState.Status,
+                pid: containerState.Pid,
+                startedAt: containerState.StartedAt
+              }
+            }
+          })
+        })
+        .catch(err => console.log(err))
+    } else {
+      this.setState({ curClient })
+    }
   }
 
   handlerContainerCreate = client => {
@@ -193,8 +215,8 @@ class Admin extends Component {
       .then(res => {
         const client = res.data
         console.log('Client:', client)
-        this.setState({ 
-          clients: this.state.clients.map(c => c.id === client.id ? client : c ),
+        this.setState({
+          clients: this.state.clients.map(c => (c.id === client.id ? client : c)),
           curClient: client
         })
         notification.open({
@@ -288,6 +310,9 @@ class Admin extends Component {
                       <Descriptions.Item label='Created'>
                         {moment(client.docker.created).format('DD/MM/YYYY HH:mm')}
                       </Descriptions.Item>
+                      <Descriptions.Item label='Status'>{client.docker.status}</Descriptions.Item>
+                      <Descriptions.Item label='Pid'>{client.docker.pid}</Descriptions.Item>
+                      <Descriptions.Item label='Started'>{client.docker.startedAt}</Descriptions.Item>
                     </Descriptions>
                   </div>
                 ) : (
