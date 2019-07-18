@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import axios from 'axios'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import { addObjectEvent, modifyObjectEvent } from '../../../actions/propsActions'
 
@@ -32,7 +31,7 @@ class Event extends React.Component {
     })
   }
 
-  // метод вызывается когда перешли на другое свойство и измененное св-во надо сохранить
+  // метод вызывается когда перешли на другое событие и измененное событие надо сохранить
   handleOnEventSave (eventBody) {
     const { event } = this.state
     const { entity, onAddObjectEvent, onModifyObjectEvent } = this.props

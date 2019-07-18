@@ -60,6 +60,10 @@ class Configuration extends React.Component {
       })
   }
 
+  componentDidUpdate () {
+    console.log('Configurator didUpdate')
+  }
+
   static getDerivedStateFromProps (nextProps, prevState) {
     if (nextProps.configuration) {
       console.log('getDerivedStateFromProps')

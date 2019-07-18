@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import { withNamespaces } from 'react-i18next'
-import { Table, Tabs } from 'antd'
+import { Table, Tabs, Modal, Input, Form } from 'antd'
 import { Nav, NavItem, NavLink, TabContent } from 'reactstrap'
 // components
 import SystemProps from './SystemProps'
@@ -12,8 +12,10 @@ import Event from './Event'
 import EditableTable from './EditableTable'
 // actions
 import { fetchProps } from '../../../actions/propsActions'
+import { addObjectEvent, modifyObjectEvent } from '../../../actions/propsActions'
 
 const { TabPane } = Tabs
+const { TextArea } = Input
 
 const objectsPropsName = ['ID', 'Name', 'Description', 'Tag']
 
@@ -23,7 +25,10 @@ class PropEventsBlock extends Component {
     this.state = {
       selectedProperty: null,
       selectedEvent: null,
-      activeTab: '1'
+      activeTab: '1',
+      showEventEditModal: false,
+      eventEditValue: null,
+      selectedEvent: null
     }
     this.handlePropertyClick = this.handlePropertyClick.bind(this)
     this.handleTabSelect = this.handleTabSelect.bind(this)
@@ -42,6 +47,46 @@ class PropEventsBlock extends Component {
     this.setState({ activeTab: key })
   }
 
+  handleEventEditClose = () => {
+    this.setState({ showEventEditModal: false })
+  }
+
+  handleEventEditShow = record => {
+    console.log(record)
+    this.setState({
+      eventEditValue: record.value,
+      showEventEditModal: true
+    })
+  }
+
+  handleEventValueChange = ev => {
+    this.setState({ eventEditValue: ev.target.value })
+  }
+
+  handleSaveEvent = () => {
+    const { entity } = this.props
+    const { selectedEvent, eventEditValue } = this.state
+    const object = {
+      id: selectedEvent.objectId,
+      name: selectedEvent.name,
+      description: selectedEvent.description,
+      type: selectedEvent.propType === 'property' ? 2 : 3,
+      paramValue: selectedEvent.paramValue,
+      eventValue: eventEditValue,
+      owner: entity.id
+    }
+    if (selectedEvent.objectId) {
+      this.props.modifyObjectEvent(object)
+    } else {
+      this.props.addObjectEvent(object)
+    }
+    this.setState({ showEventEditModal: false })
+  }
+
+  handleEventClick = event => {
+    this.setState({ selectedEvent: event })
+  }
+
   render () {
     const { selectedProperty, activeTab } = this.state
     const { onEntityChange, entity, t } = this.props
@@ -49,7 +94,17 @@ class PropEventsBlock extends Component {
       {
         title: t('configurator.objectProperty'),
         dataIndex: 'property',
-        width: '50%'
+        width: '50%',
+        sorter: (a, b) => {
+          const nameA = a.property.toLowerCase()
+          const nameB = b.property.toLowerCase()
+          if (nameA < nameB) {
+            // sort string ascending
+            return -1
+          }
+          if (nameA > nameB) return 1
+          return 0
+        }
       },
       {
         title: t('configurator.propertyValue'),
@@ -59,30 +114,69 @@ class PropEventsBlock extends Component {
       }
     ]
 
-    let dataSource = objectsPropsName.map((item, idx) => ({
+    let properties = objectsPropsName.map((item, idx) => ({
       key: idx,
       property: item,
-      value: entity[item.toLowerCase()]
+      value: entity[item.toLowerCase()],
+      default: item.default,
+      
     }))
 
-    dataSource = [...dataSource, ...this.getProperties().map(item => ({
-      key: item.id,
-      property: item.name,
-      value: item.paramValue,
-      valueType: item.valueType,
-      values: item.values
-    }))]
+    properties = [
+      ...properties,
+      ...this.getProperties().map(item => ({
+        key: item.id,
+        property: item.name,
+        value: item.paramValue,
+        valueType: item.valueType,
+        values: item.values,
+        default: item.default
+      }))
+    ]
+
+    const events = [
+      ...this.getEvents().map(item => ({
+        key: item.id,
+        property: item.name,
+        value: item.eventValue,
+        default: item.default,
+        ...item
+      }))
+    ]
+    console.log(events)
 
     return (
-      <Tabs defaultActiveKey={activeTab} type='card' onChange={this.handleTabSelect}>
-        <TabPane tab={t('configurator.properties')} key='1'>
-          <EditableTable columns={columns} dataSource={dataSource} />
-          {console.log(this.getProperties())}
-        </TabPane>
-        <TabPane tab={t('configurator.events')} key='2'>
-          <Table bordered size='small' />
-        </TabPane>
-      </Tabs>
+      <React.Fragment>
+        <Tabs defaultActiveKey={activeTab} type='card' onChange={this.handleTabSelect}>
+          <TabPane tab={t('configurator.properties')} key='1'>
+            <EditableTable columns={columns} dataSource={properties} />
+          </TabPane>
+          <TabPane tab={t('configurator.events')} key='2'>
+            <Table
+              bordered
+              size='small'
+              columns={columns}
+              dataSource={events}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: () => this.handleEventClick(record),
+                  onDoubleClick: () => this.handleEventEditShow(record),
+                  className: !record.default && 'editable-row__text-primary'
+                }
+              }}
+            />
+          </TabPane>
+        </Tabs>
+        <Modal
+          title='Редактирование события'
+          visible={this.state.showEventEditModal}
+          onOk={this.handleSaveEvent}
+          onCancel={this.handleEventEditClose}
+        >
+          <span>Код события:</span>
+          <TextArea rows={20} defaultValue={this.state.eventEditValue} onChange={this.handleEventValueChange} />
+        </Modal>
+      </React.Fragment>
     )
   }
 
@@ -163,7 +257,7 @@ class PropEventsBlock extends Component {
   getProperties = () => {
     const { properties, entity } = this.props
     // выбыраем все св-ва по умолчанию для данного типа объекта
-    let defaultProps = this.props.defaultProps.filter(p => p.type === entity.type && p.propType === 'property')
+    const defaultProps = this.props.defaultProps.filter(p => p.type === entity.type && p.propType === 'property')
     return defaultProps.map(property => {
       const entityProp = properties.find(p => p.name === property.name)
       return {
@@ -179,7 +273,7 @@ class PropEventsBlock extends Component {
   getEvents = () => {
     const { events, entity } = this.props
     // выбыраем все события по умолчанию для данного типа объекта
-    let defaultProps = this.props.defaultProps.filter(p => p.type === entity.type && p.propType === 'event')
+    const defaultProps = this.props.defaultProps.filter(p => p.type === entity.type && p.propType === 'event')
     return defaultProps.map(event => {
       const entityEvents = events.find(e => e.name === event.name)
       return {
@@ -218,5 +312,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { fetchProps }
+  { fetchProps, addObjectEvent, modifyObjectEvent }
 )(withNamespaces('translation')(PropEventsBlock))

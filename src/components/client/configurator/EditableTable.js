@@ -189,11 +189,11 @@ class EditableTable extends React.Component {
         size='small'
         pagination={{ pageSize: 50 }}
         scroll={{ y: 560 }}
-        // onRow={(record, rowIndex) => {
-        //   return {
-        //     index: rowIndex
-        //   }
-        // }}
+        onRow={(record, rowIndex) => {
+          return {
+            className: !record.default && 'editable-row__text-primary'
+          }
+        }}
       />
     )
   }

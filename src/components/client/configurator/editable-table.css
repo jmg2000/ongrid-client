@@ -12,3 +12,7 @@
   border-radius: 4px;
   padding: 1px 11px;
 }
+
+.editable-row__text-primary {
+  color: #337ab7;
+}
