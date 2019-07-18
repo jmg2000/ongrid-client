@@ -252,7 +252,7 @@ class Admin extends Component {
   handleStopContainer = client => {
     this.setState({ stopingContainer: true })
     axios
-      .get(`/api/docker/stop-container/${client.docker.containerId}`)
+      .post(`/api/docker/stop-container/${client.docker.containerId}`)
       .then(res => {
         this.setState({ stopingContainer: false })
         this.handlerRowClick(client.id)
