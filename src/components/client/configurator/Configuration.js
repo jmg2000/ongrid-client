@@ -95,6 +95,7 @@ class Configuration extends React.Component {
   }
 
   handlerEntityClick (entity) {
+    console.log(entity)
     this.setState({
       selectedEntity: entity
     })
@@ -283,7 +284,8 @@ class Configuration extends React.Component {
           if (nameA > nameB) return 1
           return 0
         },
-        sortDirections: ['descend', 'ascend']
+        sortDirections: ['descend', 'ascend'],
+        defaultSortOrder: 'ascend'
       }
     ]
 

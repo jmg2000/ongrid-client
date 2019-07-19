@@ -93,9 +93,6 @@ class EditableCell extends Component {
     this.form = form
     const { children, dataIndex, record, title } = this.props
     const { editing } = this.state
-    if (editing) {
-      console.log(record)
-    }
     return editing ? (
       <Form.Item style={{ margin: 0 }}>
         {form.getFieldDecorator(dataIndex, {
@@ -143,6 +140,15 @@ class EditableTable extends React.Component {
     }
   }
 
+  static getDerivedStateFromProps (nextProps, prevState) {
+    if (nextProps.dataSource) {
+      return {
+        dataSource: nextProps.dataSource
+      }
+    }
+    return null
+  }
+
   handleSave = row => {
     console.log(row)
     const newData = [...this.state.dataSource]
@@ -152,6 +158,7 @@ class EditableTable extends React.Component {
       ...item,
       ...row
     })
+    this.props.onChange(row)
     this.setState({ dataSource: newData })
   }
 
@@ -191,7 +198,8 @@ class EditableTable extends React.Component {
         scroll={{ y: 560 }}
         onRow={(record, rowIndex) => {
           return {
-            className: !record.default && 'editable-row__text-primary'
+            className: !record.default && 'editable-row__text-primary',
+            onClick: () => this.props.onRowClick(record)
           }
         }}
       />
@@ -201,7 +209,9 @@ class EditableTable extends React.Component {
 
 EditableTable.propTypes = {
   columns: PropTypes.array.isRequired,
-  dataSource: PropTypes.array.isRequired
+  dataSource: PropTypes.array.isRequired,
+  onChange: PropTypes.func,
+  onRowClick: PropTypes.func
 }
 
 export default EditableTable
