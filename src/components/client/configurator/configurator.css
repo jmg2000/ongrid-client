@@ -1,7 +1,0 @@
-.fixed-column {
-  position: fixed;
-  left: 0;
-  top: 55px;
-  height: calc(100% - 55px);
-  overflow-y: auto;
-}

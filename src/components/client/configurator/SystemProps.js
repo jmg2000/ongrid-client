@@ -1,12 +1,13 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+// actions
 import { modifyConfiguration } from '../../../actions/configurationActions'
 
 const objectsProps = ['id', 'name', 'description', 'tag']
 const objectsPropsName = ['ID', 'Name', 'Description', 'Tag']
 
-class SystemProps extends React.Component {
+class SystemProps extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -36,7 +37,7 @@ class SystemProps extends React.Component {
   }
 
   handleOnBlur (e) {
-    const { modifyObject, entity } = this.props
+    const { entity } = this.props
     const { editProp, editPropValue } = this.state
     let object = {
       ...entity,
@@ -44,12 +45,13 @@ class SystemProps extends React.Component {
       description: editProp === 2 ? editPropValue : entity.description,
       tag: editProp === 3 ? editPropValue : entity.tag
     }
-    modifyObject(object)
+    this.props.modifyConfiguration(object)
   }
 
   render () {
     const { editProp, editPropValue } = this.state
     const { entity } = this.props
+    
     return (
       <React.Fragment>
         {objectsProps.map((op, i) => (
@@ -76,13 +78,7 @@ SystemProps.propTypes = {
     description: PropTypes.string,
     tag: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
   }).isRequired,
-  onEntityChange: PropTypes.func
+  modifyConfiguration: PropTypes.func.isRequired
 }
 
-const mapDispatchToProps = dispatch => ({
-  modifyObject (object) {
-    dispatch(modifyConfiguration(object))
-  }
-})
-
-export default connect(null, mapDispatchToProps)(SystemProps)
+export default connect(null, { modifyConfiguration })(SystemProps)
