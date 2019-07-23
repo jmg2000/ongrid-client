@@ -10,6 +10,7 @@ import EditableTable from './EditableTable'
 // actions
 import { fetchProps } from '../../../actions/propsActions'
 import { addObjectEvent, modifyObjectEvent, addObjectProp, modifyObjectProp } from '../../../actions/propsActions'
+import { modifyConfiguration } from '../../../actions/configurationActions'
 
 const { TabPane } = Tabs
 const { TextArea } = Input
@@ -24,7 +25,7 @@ class PropEventsBlock extends Component {
       selectedEvent: null,
       activeTab: '1',
       showEventEditModal: false,
-      eventEditValue: null,
+      eventEditValue: null
     }
     this.handlePropertyClick = this.handlePropertyClick.bind(this)
     this.handleTabSelect = this.handleTabSelect.bind(this)
@@ -83,19 +84,32 @@ class PropEventsBlock extends Component {
   handleSaveProp = prop => {
     const { entity } = this.props
     const { selectedProperty } = this.state
-    const object = {
-      id: selectedProperty.objectId,
-      name: selectedProperty.name,
-      description: selectedProperty.description,
-      type: selectedProperty.propType === 'property' ? 2 : 3,
-      paramValue: prop.value,
-      eventValue: selectedProperty.eventValue,
-      owner: entity.id
-    }
-    if (selectedProperty.objectId) {
-      this.props.modifyObjectProp(object)
+    if (objectsPropsName.includes(prop.property)) {
+      console.log('objects props')
+      const editProp = objectsPropsName.indexOf(prop.property)
+      console.log(editProp)
+      const object = {
+        ...entity,
+        name: editProp === 1 ? prop.value : entity.name,
+        description: editProp === 2 ? prop.value : entity.description,
+        tag: editProp === 3 ? prop.value : entity.tag
+      }
+      this.props.modifyConfiguration(object)
     } else {
-      this.props.addObjectProp(object)
+      const property = {
+        id: selectedProperty.objectId,
+        name: selectedProperty.name,
+        description: selectedProperty.description,
+        type: selectedProperty.propType === 'property' ? 2 : 3,
+        paramValue: prop.value,
+        eventValue: selectedProperty.eventValue,
+        owner: entity.id
+      }
+      if (selectedProperty.objectId) {
+        this.props.modifyObjectProp(property)
+      } else {
+        this.props.addObjectProp(property)
+      }
     }
   }
 
@@ -263,5 +277,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { fetchProps, addObjectEvent, modifyObjectEvent, addObjectProp, modifyObjectProp }
+  { fetchProps, addObjectEvent, modifyObjectEvent, addObjectProp, modifyObjectProp, modifyConfiguration }
 )(withNamespaces('translation')(PropEventsBlock))
