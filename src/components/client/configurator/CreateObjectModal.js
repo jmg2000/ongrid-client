@@ -6,6 +6,15 @@ const { Option } = Select
 
 const CreateObjectForm = Form.create({ name: 'createObjectModal' })(
   class extends Component {
+    validateObjectName = (rule, value, cb) => {
+      const { objectsList } = this.props
+      console.log('validator', rule, value)
+      if (objectsList.find(obj => obj.name.toLowerCase() === value.toLowerCase())) {
+        cb(false)
+      }
+      cb()
+    }
+
     render () {
       const { visible, isField, onCreate, onCancel, form, t } = this.props
       const { getFieldDecorator } = form
@@ -20,7 +29,13 @@ const CreateObjectForm = Form.create({ name: 'createObjectModal' })(
           <Form>
             <Form.Item label={t('configurator.name')}>
               {getFieldDecorator('name', {
-                rules: [{ required: true, message: 'Please input the name of object' }]
+                rules: [
+                  { required: true, message: 'Please input the name of object' },
+                  {
+                    validator: this.validateObjectName,
+                    message: 'An object with this name already exists.'
+                  }
+                ]
               })(<Input />)}
             </Form.Item>
             <Form.Item label={t('configurator.desc')}>{getFieldDecorator('description')(<Input />)}</Form.Item>
@@ -28,7 +43,7 @@ const CreateObjectForm = Form.create({ name: 'createObjectModal' })(
               <React.Fragment>
                 <Form.Item label={t('configurator.fieldType')}>
                   {getFieldDecorator('fieldType', {
-                    rules: [{ required: true, message: 'Please specify field type'}],
+                    rules: [{ required: true, message: 'Please specify field type' }],
                     initialValue: 'string'
                   })(
                     <Select>

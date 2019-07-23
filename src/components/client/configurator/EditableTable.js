@@ -91,17 +91,17 @@ class EditableCell extends Component {
 
   renderCell = form => {
     this.form = form
-    const { children, dataIndex, record, title } = this.props
+    const { children, dataIndex, record, title, validator } = this.props
     const { editing } = this.state
     return editing ? (
       <Form.Item style={{ margin: 0 }}>
         {form.getFieldDecorator(dataIndex, {
-          // rules: [
-          //   {
-          //     required: true,
-          //     message: `${title} is required.`
-          //   }
-          // ],
+          rules: [
+            {
+              validator,
+              message: 'An object with this name already exists.'
+            }
+          ],
           initialValue: record[dataIndex]
           //getValueFromEvent: defaultGetValueFromEvent
         })(this.getInputByType(record))}
@@ -129,7 +129,8 @@ EditableCell.propTypes = {
   title: PropTypes.string,
   record: PropTypes.object,
   handleSave: PropTypes.func,
-  children: PropTypes.array.isRequired
+  children: PropTypes.array.isRequired,
+  validator: PropTypes.func.isRequired
 }
 
 class EditableTable extends React.Component {
@@ -181,7 +182,8 @@ class EditableTable extends React.Component {
           editable: col.editable,
           dataIndex: col.dataIndex,
           title: col.title,
-          handleSave: this.handleSave
+          handleSave: this.handleSave,
+          validator: this.props.validator
         })
       }
     })
@@ -211,7 +213,8 @@ EditableTable.propTypes = {
   columns: PropTypes.array.isRequired,
   dataSource: PropTypes.array.isRequired,
   onChange: PropTypes.func,
-  onRowClick: PropTypes.func
+  onRowClick: PropTypes.func,
+  validator: PropTypes.func.isRequired
 }
 
 export default EditableTable

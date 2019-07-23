@@ -136,7 +136,7 @@ class Configuration extends Component {
   // нажате на кнопку "Создать"
   handleCreateEntity (values) {
     const { form } = this.formRef.props
-    const { curFolder, entityChain, parentEntity } = this.state
+    const { curFolder, entityChain, parentEntity, objectsList } = this.state
     const { newConfigurationObject } = this.props
     form.validateFields((err, values) => {
       if (err) {
@@ -149,7 +149,7 @@ class Configuration extends Component {
       if (entityChain.length > 0) {
         owner = entityChain[entityChain.length - 1].id
       }
-      const object = {
+      const newObject = {
         name: values.name,
         type: parentEntity ? (parentEntity.type === 1 ? 0 : curFolder) : curFolder,
         description: values.description,
@@ -157,8 +157,8 @@ class Configuration extends Component {
         fieldSize: values.fieldSize,
         owner
       }
-      console.log(object)
-      newConfigurationObject(object)
+      console.log(newObject)
+      newConfigurationObject(newObject)
       // this.props.addConfigurationObject(object)
     })
   }
@@ -324,6 +324,7 @@ class Configuration extends Component {
                       key={selectedEntity.id}
                       entity={selectedEntity}
                       defaultProps={defaultProps}
+                      objectsList={objectsList}
                       // onEntityChange={this.handleOnEntityChange}
                     />
                   )}
@@ -338,6 +339,7 @@ class Configuration extends Component {
           onCreate={this.handleCreateEntity}
           onCancel={this.handlerCloseModal}
           isField={parentEntity && parentEntity.type === 1}
+          objectsList={objectsList}
         />
       </React.Fragment>
     )

@@ -121,6 +121,16 @@ class PropEventsBlock extends Component {
     this.setState({ selectedProperty: prop })
   }
 
+  validateObjectName = (rule, value, cb) => {
+    const { objectsList, entity } = this.props
+    console.log('validator', rule, value)
+    const dublicate = objectsList.find(obj => obj.name.toLowerCase() === value.toLowerCase())
+    if (dublicate && entity.id !== dublicate.id) {
+      cb(false)
+    }
+    cb()
+  }
+
   render () {
     const { activeTab } = this.state
     const { entity, t } = this.props
@@ -188,6 +198,7 @@ class PropEventsBlock extends Component {
               dataSource={properties}
               onRowClick={this.handlePropertyClick}
               onChange={this.handleSaveProp}
+              validator={this.validateObjectName}
             />
           </TabPane>
           <TabPane tab={t('configurator.events')} key='2'>
@@ -267,7 +278,8 @@ PropEventsBlock.propTypes = {
     })
   ).isRequired,
   properties: PropTypes.array,
-  events: PropTypes.array
+  events: PropTypes.array,
+  objectsList: PropTypes.array.isRequired
 }
 
 const mapStateToProps = state => ({
