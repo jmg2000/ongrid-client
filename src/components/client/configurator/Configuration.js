@@ -277,7 +277,7 @@ class Configuration extends Component {
                   <div className='row'>
                     <h6>{t('configurator.objectType')}</h6>
                   </div>
-                  <div className='row'>
+                  <div className='row configurator__folders-list'>
                     <List
                       bordered
                       dataSource={folders}
@@ -314,7 +314,7 @@ class Configuration extends Component {
                       </div>
                     </div>
                   </div>
-                  <div className='row configurator__objectlist'>
+                  <div className='row configurator__objects-list'>
                     <div className='col-sm-12'>{this.getObjectList(t, objectsList)}</div>
                   </div>
                 </div>

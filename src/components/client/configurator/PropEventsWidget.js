@@ -207,6 +207,8 @@ class PropEventsBlock extends Component {
               size='small'
               columns={columns}
               dataSource={events}
+              pagination={{ pageSize: 100 }}
+              scroll={{ y: 540 }}
               onRow={(record, rowIndex) => {
                 return {
                   onClick: () => this.handleEventClick(record),

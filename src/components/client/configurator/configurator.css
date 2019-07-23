@@ -2,6 +2,10 @@
   margin: 10px 10px 0 10px;
 }
 
-.configurator__objectlist {
-  margin-top: 7px;
+.configurator__objects-list {
+  margin-top: 5px;
+}
+
+.configurator__folders-list {
+  margin-top: 10px;
 }
