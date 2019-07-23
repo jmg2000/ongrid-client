@@ -9,3 +9,7 @@
 .configurator__folders-list {
   margin-top: 10px;
 }
+
+.configuration__objects-list_active {
+  background: #b7dbfc;
+}

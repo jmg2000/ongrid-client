@@ -178,7 +178,7 @@ class Configuration extends Component {
 
   
 
-  getObjectList (t, objectsList) {
+  getObjectList (t, objectsList, selectedEntity) {
     const dataSource = objectsList.map(obj => ({
       key: obj.id,
       description: obj.description,
@@ -230,10 +230,11 @@ class Configuration extends Component {
         columns={columns}
         pagination={{ pageSize: 50 }}
         scroll={{ y: 560 }}
-        size='small'
+        size='middle'
         bordered
         onRow={(record, rowIndex) => {
           return {
+            className: selectedEntity && record.key === selectedEntity.id ? 'configuration__objects-list_active' : null,
             onClick: () => this.handlerEntityClick(record.entity),
             onDoubleClick: () => this.handlerEntityDblClick(record.entity)
           }
@@ -315,7 +316,7 @@ class Configuration extends Component {
                     </div>
                   </div>
                   <div className='row configurator__objects-list'>
-                    <div className='col-sm-12'>{this.getObjectList(t, objectsList)}</div>
+                    <div className='col-sm-12'>{this.getObjectList(t, objectsList, selectedEntity)}</div>
                   </div>
                 </div>
                 <div className='col-sm-3'>

@@ -204,7 +204,7 @@ class PropEventsBlock extends Component {
           <TabPane tab={t('configurator.events')} key='2'>
             <Table
               bordered
-              size='small'
+              size='middle'
               columns={columns}
               dataSource={events}
               pagination={{ pageSize: 100 }}

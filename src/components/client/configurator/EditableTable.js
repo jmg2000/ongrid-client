@@ -114,7 +114,7 @@ class EditableCell extends Component {
   }
 
   render () {
-    const { editable, dataIndex, title, record, index, handleSave, children, ...restProps } = this.props
+    const { editable, dataIndex, title, record, index, handleSave, children, validator, ...restProps } = this.props
     return (
       <td {...restProps}>
         {editable ? <EditableContext.Consumer>{this.renderCell}</EditableContext.Consumer> : children}
@@ -130,7 +130,7 @@ EditableCell.propTypes = {
   record: PropTypes.object,
   handleSave: PropTypes.func,
   children: PropTypes.array.isRequired,
-  validator: PropTypes.func.isRequired
+  validator: PropTypes.func
 }
 
 class EditableTable extends React.Component {
@@ -195,7 +195,7 @@ class EditableTable extends React.Component {
         bordered
         dataSource={dataSource}
         columns={columns}
-        size='small'
+        size='middle'
         pagination={{ pageSize: 100 }}
         scroll={{ y: 540 }}
         onRow={(record, rowIndex) => {
