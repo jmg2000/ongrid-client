@@ -194,8 +194,8 @@ class EditableTable extends React.Component {
         dataSource={dataSource}
         columns={columns}
         size='small'
-        pagination={{ pageSize: 50 }}
-        scroll={{ y: 560 }}
+        pagination={{ pageSize: 100 }}
+        scroll={{ y: 540 }}
         onRow={(record, rowIndex) => {
           return {
             className: !record.default && 'editable-row__text-primary',

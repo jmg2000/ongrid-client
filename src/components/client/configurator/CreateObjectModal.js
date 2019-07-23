@@ -28,6 +28,7 @@ const CreateObjectForm = Form.create({ name: 'createObjectModal' })(
               <React.Fragment>
                 <Form.Item label={t('configurator.fieldType')}>
                   {getFieldDecorator('fieldType', {
+                    rules: [{ required: true, message: 'Please specify field type'}],
                     initialValue: 'string'
                   })(
                     <Select>

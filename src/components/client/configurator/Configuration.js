@@ -176,89 +176,7 @@ class Configuration extends Component {
     this.formRef = formRef
   }
 
-  render () {
-    const { curFolder, defaultProps, selectedEntity, objectsList, parentEntity } = this.state
-    const { loading, t } = this.props
-
-    return (
-      <React.Fragment>
-        {loading ? (
-          <div className='loader'>
-            <ReactLoading type='spinningBubbles' color='#007bff' height={'15%'} width={'15%'} />
-          </div>
-        ) : (
-          <div className='container-fluid'>
-            <h1>{t('configurator.objectManager')}</h1>
-            <section className='configuration'>
-              <div className='row'>
-                <div className='col-sm-2'>
-                  <h4>{t('configurator.objectType')}</h4>
-                </div>
-                <div className='col-sm-7'>
-                  <div className='row'>
-                    <div className='col-sm-8'>{this.getBreatcrumbs(t)}</div>
-                    <div className='col-sm-4'>
-                      <div className='float-right'>
-                        <ButtonGroup>
-                          <Button type='primary' onClick={this.handleShowModal}>
-                            {t('configurator.create')}
-                          </Button>
-                          <Button type='danger' onClick={this.handleDeleteEntity}>
-                            {t('configurator.delete')}
-                          </Button>
-                        </ButtonGroup>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className='col-sm-3' />
-              </div>
-              <div className='row'>
-                <div className='col-sm-2'>
-                  <List
-                    bordered
-                    dataSource={folders}
-                    renderItem={item => (
-                      <List.Item>
-                        <Icon type={item.icon} />
-                        <List.Item.Meta
-                          avatar={<Icon type={item.icon} />}
-                          title={
-                            <a href='#' onClick={() => this.handlerFolderSelect(item.id)}>
-                              {t(item.title)}
-                            </a>
-                          }
-                          description={t(item.description)}
-                        />
-                      </List.Item>
-                    )}
-                  />
-                </div>
-                <div className='col-sm-7'>{this.getObjectList(t, objectsList)}</div>
-                <div className='col-md-3'>
-                  {selectedEntity && (
-                    <PropEventsBlock
-                      key={selectedEntity.id}
-                      entity={selectedEntity}
-                      defaultProps={defaultProps}
-                      // onEntityChange={this.handleOnEntityChange}
-                    />
-                  )}
-                </div>
-              </div>
-            </section>
-          </div>
-        )}
-        <CreateObjectModal
-          wrappedComponentRef={this.saveFormRef}
-          visible={this.state.showModal}
-          onCreate={this.handleCreateEntity}
-          onCancel={this.handlerCloseModal}
-          isField={parentEntity && parentEntity.type === 1}
-        />
-      </React.Fragment>
-    )
-  }
+  
 
   getObjectList (t, objectsList) {
     const dataSource = objectsList.map(obj => ({
@@ -337,6 +255,91 @@ class Configuration extends Component {
           <Breadcrumb.Item key={entity.id}>{entity.name}</Breadcrumb.Item>
         ))}
       </Breadcrumb>
+    )
+  }
+
+  render () {
+    const { curFolder, defaultProps, selectedEntity, objectsList, parentEntity } = this.state
+    const { loading, t } = this.props
+
+    return (
+      <React.Fragment>
+        {loading ? (
+          <div className='loader'>
+            <ReactLoading type='spinningBubbles' color='#007bff' height={'15%'} width={'15%'} />
+          </div>
+        ) : (
+          <div className='container-fluid'>
+            <PageHeader title={t('configurator.objectManager')} />
+            <section className='configuration'>
+              <div className='row'>
+                <div className='col-sm-2'>
+                  <div className='row'>
+                    <h6>{t('configurator.objectType')}</h6>
+                  </div>
+                  <div className='row'>
+                    <List
+                      bordered
+                      dataSource={folders}
+                      renderItem={item => (
+                        <List.Item>
+                          <Icon type={item.icon} />
+                          <List.Item.Meta
+                            avatar={<Icon type={item.icon} />}
+                            title={
+                              <a href='#' onClick={() => this.handlerFolderSelect(item.id)}>
+                                {t(item.title)}
+                              </a>
+                            }
+                            description={t(item.description)}
+                          />
+                        </List.Item>
+                      )}
+                    />
+                  </div>
+                </div>
+                <div className='col-sm-7'>
+                  <div className='row'>
+                    <div className='col-sm-8'>{this.getBreatcrumbs(t)}</div>
+                    <div className='col-sm-4'>
+                      <div className='float-right'>
+                        <ButtonGroup>
+                          <Button type='primary' onClick={this.handleShowModal}>
+                            {t('configurator.create')}
+                          </Button>
+                          <Button type='danger' onClick={this.handleDeleteEntity}>
+                            {t('configurator.delete')}
+                          </Button>
+                        </ButtonGroup>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='row configurator__objectlist'>
+                    <div className='col-sm-12'>{this.getObjectList(t, objectsList)}</div>
+                  </div>
+                </div>
+                <div className='col-sm-3'>
+                  {selectedEntity && (
+                    <PropEventsBlock
+                      key={selectedEntity.id}
+                      entity={selectedEntity}
+                      defaultProps={defaultProps}
+                      // onEntityChange={this.handleOnEntityChange}
+                    />
+                  )}
+                </div>
+              </div>
+            </section>
+          </div>
+        )}
+        <CreateObjectModal
+          wrappedComponentRef={this.saveFormRef}
+          visible={this.state.showModal}
+          onCreate={this.handleCreateEntity}
+          onCancel={this.handlerCloseModal}
+          isField={parentEntity && parentEntity.type === 1}
+        />
+      </React.Fragment>
     )
   }
 }
