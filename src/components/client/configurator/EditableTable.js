@@ -70,20 +70,20 @@ class EditableCell extends Component {
           </Select>
         )
       case 'color':
-        return <input />
-      case 'filename':
-      case 'picture':
-        const props = {
-          name: 'file',
-          action: '/api/resource'
-        }
-        return (
-          <Upload {...props} onChange={this.save}>
-            <Button ref={node => (this.input = node)}>
-              <Icon type='upload' /> Click to Upload
-            </Button>
-          </Upload>
-        )
+        return <Input ref={node => (this.input = node)} type='color' onPressEnter={this.save} onBlur={this.save} />
+      // case 'filename':
+      // case 'picture':
+      //   const props = {
+      //     name: 'file',
+      //     action: '/api/resource'
+      //   }
+      //   return (
+      //     <Upload {...props} onChange={this.save}>
+      //       <Button ref={node => (this.input = node)}>
+      //         <Icon type='upload' /> Click to Upload
+      //       </Button>
+      //     </Upload>
+      //   )
       default:
         return <Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />
     }
