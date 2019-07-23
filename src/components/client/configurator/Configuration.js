@@ -1,18 +1,19 @@
-import React from 'react'
+import React, { Component } from 'react'
 import axios from 'axios'
 import { connect } from 'react-redux'
-import PropEventsBlock from './PropEventsWidget'
 import ReactLoading from 'react-loading'
 import { withNamespaces } from 'react-i18next'
 import { Table, PageHeader, Breadcrumb, Icon, List, Button } from 'antd'
-
+// actions
 import {
   fetchConfiguration,
   addConfigurationObject,
   removeConfigurationObject
 } from '../../../actions/configurationActions'
+// components
 import CreateObjectModal from './CreateObjectModal'
-
+import PropEventsBlock from './PropEventsWidget'
+// styles
 import './configurator.css'
 
 import folders from './objecttypes.json'
@@ -21,7 +22,7 @@ const getDefaultProps = () => axios.get('/api/configuration/default-props')
 
 const ButtonGroup = Button.Group
 
-class Configuration extends React.Component {
+class Configuration extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -134,24 +135,32 @@ class Configuration extends React.Component {
 
   // нажате на кнопку "Создать"
   handleCreateEntity (values) {
+    const { form } = this.formRef.props
     const { curFolder, entityChain, parentEntity } = this.state
     const { newConfigurationObject } = this.props
-    console.log(values)
-    this.setState({ showModal: false })
-    let owner
-    if (entityChain.length > 0) {
-      owner = entityChain[entityChain.length - 1].id
-    }
-    const object = {
-      name: values.name,
-      type: parentEntity ? (parentEntity.type === 1 ? 0 : curFolder) : curFolder,
-      description: values.description,
-      fieldType: values.fieldType,
-      fieldSize: values.fieldSize,
-      owner
-    }
-    newConfigurationObject(object)
-    // this.props.addConfigurationObject(object)
+    form.validateFields((err, values) => {
+      if (err) {
+        console.log(err)
+        return
+      }
+      form.resetFields()
+      this.setState({ showModal: false })
+      let owner
+      if (entityChain.length > 0) {
+        owner = entityChain[entityChain.length - 1].id
+      }
+      const object = {
+        name: values.name,
+        type: parentEntity ? (parentEntity.type === 1 ? 0 : curFolder) : curFolder,
+        description: values.description,
+        fieldType: values.fieldType,
+        fieldSize: values.fieldSize,
+        owner
+      }
+      console.log(object)
+      newConfigurationObject(object)
+      // this.props.addConfigurationObject(object)
+    })
   }
 
   handleShowModal = () => {
@@ -160,6 +169,11 @@ class Configuration extends React.Component {
 
   handlerCloseModal = () => {
     this.setState({ showModal: false })
+  }
+
+  saveFormRef = formRef => {
+    console.log('saveFormRef')
+    this.formRef = formRef
   }
 
   render () {
@@ -236,10 +250,11 @@ class Configuration extends React.Component {
           </div>
         )}
         <CreateObjectModal
-          show={this.state.showModal}
-          onSubmit={this.handleCreateEntity}
-          handleClose={this.handlerCloseModal}
-          field={parentEntity && parentEntity.type === 1}
+          wrappedComponentRef={this.saveFormRef}
+          visible={this.state.showModal}
+          onCreate={this.handleCreateEntity}
+          onCancel={this.handlerCloseModal}
+          isField={parentEntity && parentEntity.type === 1}
         />
       </React.Fragment>
     )
@@ -261,10 +276,11 @@ class Configuration extends React.Component {
         width: 150,
         sorter: (a, b) => {
           const nameA = a.description.toLowerCase()
-            const nameB = b.description.toLowerCase()
-          if (nameA < nameB)
-          // sort string ascending
-          { return -1 }
+          const nameB = b.description.toLowerCase()
+          if (nameA < nameB) {
+            // sort string ascending
+            return -1
+          }
           if (nameA > nameB) return 1
           return 0
         },
@@ -277,10 +293,11 @@ class Configuration extends React.Component {
         width: 150,
         sorter: (a, b) => {
           const nameA = a.name.toLowerCase()
-            const nameB = b.name.toLowerCase()
-          if (nameA < nameB)
-          // sort string ascending
-          { return -1 }
+          const nameB = b.name.toLowerCase()
+          if (nameA < nameB) {
+            // sort string ascending
+            return -1
+          }
           if (nameA > nameB) return 1
           return 0
         },
