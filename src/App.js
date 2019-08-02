@@ -36,8 +36,8 @@ import './App.css'
 
 const Configurator = lazy(() => import('./components/client/configurator/Configuration'))
 
-// axios.defaults.baseURL = window.location.protocol + '//' + window.location.hostname + ':5000'
-axios.defaults.baseURL = 'http://ongrid.xyz:5000'
+axios.defaults.baseURL = window.location.protocol + '//' + window.location.hostname + ':5000'
+// axios.defaults.baseURL = 'http://ongrid.xyz:5000'
 
 const createUpdateAuthInterceptor = (http, refreshToken) => error => {
   if (error.response.status !== 401) {
@@ -51,8 +51,8 @@ const createUpdateAuthInterceptor = (http, refreshToken) => error => {
   console.log(error.response.message)
   // We need to update access token, because the current token is expired
   const instance = http.create({
-    //baseURL: window.location.protocol + '//' + window.location.hostname + ':5000',
-    baseURL: 'http://ongrid.xyz:5000',
+    baseURL: window.location.protocol + '//' + window.location.hostname + ':5000',
+    // baseURL: 'http://ongrid.xyz:5000',
     headers: { Authorization: refreshToken }
   })
   instance

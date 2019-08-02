@@ -237,7 +237,7 @@ class PropEventsBlock extends Component {
     // выбыраем все св-ва по умолчанию для данного типа объекта
     const defaultProps = this.props.defaultProps.filter(p => p.type === entity.type && p.propType === 'property')
     return defaultProps.map(property => {
-      const entityProp = properties.find(p => p.name === property.name)
+      const entityProp = properties.find(p => p.name.toLowerCase() === property.name.toLowerCase())
       return {
         ...property,
         objectId: entityProp ? entityProp.id : null,
@@ -250,10 +250,12 @@ class PropEventsBlock extends Component {
 
   getEvents = () => {
     const { events, entity } = this.props
+    console.log(events)
     // выбыраем все события по умолчанию для данного типа объекта
     const defaultProps = this.props.defaultProps.filter(p => p.type === entity.type && p.propType === 'event')
     return defaultProps.map(event => {
-      const entityEvents = events.find(e => e.name === event.name)
+      console.log(event)
+      const entityEvents = events.find(e => e.name.toLowerCase() === event.name.toLowerCase())
       return {
         ...event,
         objectId: entityEvents ? entityEvents.id : null,
