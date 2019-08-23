@@ -250,12 +250,15 @@ class PropEventsBlock extends Component {
 
   getEvents = () => {
     const { events, entity } = this.props
-    console.log(events)
+    // console.log(events)
     // выбыраем все события по умолчанию для данного типа объекта
     const defaultProps = this.props.defaultProps.filter(p => p.type === entity.type && p.propType === 'event')
     return defaultProps.map(event => {
-      console.log(event)
-      const entityEvents = events.find(e => e.name.toLowerCase() === event.name.toLowerCase())
+      // console.log(event)
+      let entityEvents
+      if (events.length > 0) {
+        entityEvents = events.find(e => e.name.toLowerCase() === event.name.toLowerCase())
+      }
       return {
         ...event,
         objectId: entityEvents ? entityEvents.id : null,

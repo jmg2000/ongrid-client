@@ -18,6 +18,16 @@ import './configurator.css'
 
 import folders from './objecttypes.json'
 
+export const ConfigObjectType = Object.freeze({
+  TableFields: 0,
+  Table: 1,
+  Template: 4,
+  Menu: 6,
+  Query: 7,
+  Field: 8,
+  Configuration: 10
+})
+
 const getDefaultProps = () => axios.get('/api/configuration/default-props')
 
 const ButtonGroup = Button.Group
@@ -106,11 +116,30 @@ class Configuration extends Component {
   handlerEntityDblClick (entity) {
     const { entityChain } = this.state
     const { configuration } = this.props
+    console.log('DBL:', entity)
     // если это последний уровнеь вложенности
-    if (configuration.filter(object => object.owner === entity.id).length === 0 && entity.type !== 1) {
-      this.setState({
-        selectedEntity: entity
-      })
+    if (configuration.filter(object => object.owner === entity.id).length === 0) {
+      switch (entity.type) {
+        case ConfigObjectType.Table:
+        case ConfigObjectType.Menu:
+          this.setState({
+            selectedEntity: entity,
+            parentEntity: entity,
+            entityChain: [
+              ...entityChain,
+              {
+                id: entity.id,
+                name: entity.name
+              }
+            ]
+          })
+          break
+        default:
+          this.setState({
+            selectedEntity: entity
+          })
+          break
+      }
     } else {
       this.setState({
         selectedEntity: entity,
@@ -175,8 +204,6 @@ class Configuration extends Component {
     console.log('saveFormRef')
     this.formRef = formRef
   }
-
-  
 
   getObjectList (t, objectsList, selectedEntity) {
     const dataSource = objectsList.map(obj => ({
