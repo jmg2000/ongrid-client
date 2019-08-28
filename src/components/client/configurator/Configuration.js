@@ -247,7 +247,7 @@ class Configuration extends Component {
           return 0
         },
         sortDirections: ['descend', 'ascend'],
-        defaultSortOrder: 'ascend'
+        // defaultSortOrder: 'ascend'
       }
     ]
 
