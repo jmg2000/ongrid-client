@@ -51,6 +51,7 @@ const CreateObjectForm = Form.create({ name: 'createObjectModal' })(
                       <Option value='integer'>Integer</Option>
                       <Option value='numeric'>Numeric</Option>
                       <Option value='date'>Date</Option>
+                      <Option value='logic'>Logic</Option>
                     </Select>
                   )}
                 </Form.Item>

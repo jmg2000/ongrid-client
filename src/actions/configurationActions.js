@@ -24,14 +24,14 @@ const handleErrors = response => {
 
 export const fetchConfiguration = () => dispatch => {
   dispatch(fetchConfigurationBegin())
-  return axios
+  axios
     .get('/api/configuration')
     .then(handleErrors)
     .then(parseResponse)
     .then(logData)
     .then(json => {
       dispatch(fetchConfigurationSuccess(json.configuration))
-      return json.configuration
+      // return json.configuration
     })
     .catch(error => dispatch(fetchConfigurationFailure(error)))
 }
