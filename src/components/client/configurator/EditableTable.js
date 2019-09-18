@@ -97,10 +97,10 @@ class EditableCell extends Component {
       <Form.Item style={{ margin: 0 }}>
         {form.getFieldDecorator(dataIndex, {
           rules: [
-            {
-              validator,
-              message: 'An object with this name already exists.'
-            }
+            // {
+            //   validator,
+            //   message: 'An object with this name already exists.'
+            // }
           ],
           initialValue: record[dataIndex]
           //getValueFromEvent: defaultGetValueFromEvent
