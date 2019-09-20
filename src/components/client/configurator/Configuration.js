@@ -55,7 +55,7 @@ class Configuration extends Component {
 
   componentDidMount () {
     this.setState({ loading: true })
-    this.props.loadConfiguration()
+    this.props.fetchConfiguration()
     getDefaultProps()
       .then(properties => {
         this.setState({
@@ -158,22 +158,18 @@ class Configuration extends Component {
   // нажате на кнопку "Удалить"
   handleDeleteEntity () {
     const { selectedEntity } = this.state
-    this.props.deleteConfigurationObject(selectedEntity.id)
-    // this.props.removeConfigurationObject(selectedEntity.id)
+    this.props.removeConfigurationObject(selectedEntity.id)
   }
 
   // нажате на кнопку "Создать"
-  handleCreateEntity (values) {
+  handleCreateEntity () {
     const { form } = this.formRef.props
-    const { curFolder, entityChain, parentEntity, objectsList } = this.state
-    const { newConfigurationObject } = this.props
+    const { curFolder, entityChain, parentEntity } = this.state
     form.validateFields((err, values) => {
       if (err) {
         console.log(err)
         return
       }
-      form.resetFields()
-      this.setState({ showModal: false })
       let owner
       if (entityChain.length > 0) {
         owner = entityChain[entityChain.length - 1].id
@@ -187,8 +183,9 @@ class Configuration extends Component {
         owner
       }
       console.log(newObject)
-      newConfigurationObject(newObject)
-      // this.props.addConfigurationObject(object)
+      this.props.addConfigurationObject(newObject)
+      form.resetFields()
+      this.setState({ showModal: false })
     })
   }
 
@@ -246,7 +243,7 @@ class Configuration extends Component {
           if (nameA > nameB) return 1
           return 0
         },
-        sortDirections: ['descend', 'ascend'],
+        sortDirections: ['descend', 'ascend']
         // defaultSortOrder: 'ascend'
       }
     ]
@@ -380,19 +377,7 @@ const mapStateToProps = state => ({
   error: state.configuration.error
 })
 
-const mapDispatchToProps = dispatch => ({
-  loadConfiguration () {
-    dispatch(fetchConfiguration())
-  },
-  newConfigurationObject (object) {
-    dispatch(addConfigurationObject(object))
-  },
-  deleteConfigurationObject (objectId) {
-    dispatch(removeConfigurationObject(objectId))
-  }
-})
-
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  { fetchConfiguration, addConfigurationObject, removeConfigurationObject }
 )(withNamespaces('translation')(Configuration))
