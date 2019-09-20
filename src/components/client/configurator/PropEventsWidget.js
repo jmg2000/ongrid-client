@@ -1,19 +1,18 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import classNames from 'classnames'
 import { withNamespaces } from 'react-i18next'
 import { Table, Tabs, Modal, Input } from 'antd'
 // components
 import SystemProps from './SystemProps'
 import EditableTable from './EditableTable'
+import EventEditForm from './EventEdit'
 // actions
 import { fetchProps } from '../../../actions/propsActions'
 import { addObjectEvent, modifyObjectEvent, addObjectProp, modifyObjectProp } from '../../../actions/propsActions'
 import { modifyConfiguration } from '../../../actions/configurationActions'
 
 const { TabPane } = Tabs
-const { TextArea } = Input
 
 const objectsPropsName = ['ID', 'Name', 'Description', 'Tag']
 
@@ -63,22 +62,29 @@ class PropEventsBlock extends Component {
 
   handleSaveEvent = () => {
     const { entity } = this.props
-    const { selectedEvent, eventEditValue } = this.state
-    const object = {
-      id: selectedEvent.objectId,
-      name: selectedEvent.name,
-      description: selectedEvent.description,
-      type: selectedEvent.propType === 'property' ? 2 : 3,
-      paramValue: selectedEvent.paramValue,
-      eventValue: eventEditValue,
-      owner: entity.id
-    }
-    if (selectedEvent.objectId) {
-      this.props.modifyObjectEvent(object)
-    } else {
-      this.props.addObjectEvent(object)
-    }
-    this.setState({ showEventEditModal: false })
+    const { selectedEvent } = this.state
+    const { form } = this.formRef.props
+    form.validateFields((err, values) => {
+      if (err) {
+        return
+      }
+      const object = {
+        id: selectedEvent.objectId,
+        name: selectedEvent.name,
+        description: selectedEvent.description,
+        type: selectedEvent.propType === 'property' ? 2 : 3,
+        paramValue: selectedEvent.paramValue,
+        eventValue: values.event,
+        owner: entity.id
+      }
+      if (selectedEvent.objectId) {
+        this.props.modifyObjectEvent(object)
+      } else {
+        this.props.addObjectEvent(object)
+      }
+      form.resetFields()
+      this.setState({ showEventEditModal: false })
+    })
   }
 
   handleSaveProp = prop => {
@@ -129,6 +135,47 @@ class PropEventsBlock extends Component {
       cb(false)
     }
     cb()
+  }
+
+  getProperties = () => {
+    const { properties, entity } = this.props
+    // выбыраем все св-ва по умолчанию для данного типа объекта
+    const defaultProps = this.props.defaultProps.filter(p => p.type === entity.type && p.propType === 'property')
+    return defaultProps.map(property => {
+      const entityProp = properties.find(p => p.name.toLowerCase() === property.name.toLowerCase())
+      return {
+        ...property,
+        objectId: entityProp ? entityProp.id : null,
+        paramValue: entityProp ? entityProp.paramValue : property.defaultValue,
+        eventValue: entityProp ? entityProp.eventValue : property.defaultValue,
+        default: !entityProp
+      }
+    })
+  }
+
+  getEvents = () => {
+    const { events, entity } = this.props
+    // console.log(events)
+    // выбыраем все события по умолчанию для данного типа объекта
+    const defaultProps = this.props.defaultProps.filter(p => p.type === entity.type && p.propType === 'event')
+    return defaultProps.map(event => {
+      // console.log(event)
+      let entityEvents
+      if (events.length > 0) {
+        entityEvents = events.find(e => e.name.toLowerCase() === event.name.toLowerCase())
+      }
+      return {
+        ...event,
+        objectId: entityEvents ? entityEvents.id : null,
+        paramValue: entityEvents ? entityEvents.paramValue : event.defaultValue,
+        eventValue: entityEvents ? entityEvents.eventValue : event.defaultValue,
+        default: !entityEvents
+      }
+    })
+  }
+
+  saveFormRef = formRef => {
+    this.formRef = formRef
   }
 
   render () {
@@ -219,54 +266,15 @@ class PropEventsBlock extends Component {
             />
           </TabPane>
         </Tabs>
-        <Modal
-          title='Редактирование события'
+        <EventEditForm
+          wrappedComponentRef={this.saveFormRef}
           visible={this.state.showEventEditModal}
-          onOk={this.handleSaveEvent}
           onCancel={this.handleEventEditClose}
-        >
-          <span>Код события:</span>
-          <TextArea rows={20} defaultValue={this.state.eventEditValue} onChange={this.handleEventValueChange} />
-        </Modal>
+          onSave={this.handleSaveEvent}
+          defaultValue={this.state.eventEditValue}
+        />
       </React.Fragment>
     )
-  }
-
-  getProperties = () => {
-    const { properties, entity } = this.props
-    // выбыраем все св-ва по умолчанию для данного типа объекта
-    const defaultProps = this.props.defaultProps.filter(p => p.type === entity.type && p.propType === 'property')
-    return defaultProps.map(property => {
-      const entityProp = properties.find(p => p.name.toLowerCase() === property.name.toLowerCase())
-      return {
-        ...property,
-        objectId: entityProp ? entityProp.id : null,
-        paramValue: entityProp ? entityProp.paramValue : property.defaultValue,
-        eventValue: entityProp ? entityProp.eventValue : property.defaultValue,
-        default: !entityProp
-      }
-    })
-  }
-
-  getEvents = () => {
-    const { events, entity } = this.props
-    // console.log(events)
-    // выбыраем все события по умолчанию для данного типа объекта
-    const defaultProps = this.props.defaultProps.filter(p => p.type === entity.type && p.propType === 'event')
-    return defaultProps.map(event => {
-      // console.log(event)
-      let entityEvents
-      if (events.length > 0) {
-        entityEvents = events.find(e => e.name.toLowerCase() === event.name.toLowerCase())
-      }
-      return {
-        ...event,
-        objectId: entityEvents ? entityEvents.id : null,
-        paramValue: entityEvents ? entityEvents.paramValue : event.defaultValue,
-        eventValue: entityEvents ? entityEvents.eventValue : event.defaultValue,
-        default: !entityEvents
-      }
-    })
   }
 }
 
