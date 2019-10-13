@@ -64,17 +64,18 @@ class PropEventsBlock extends Component {
     const { entity } = this.props
     const { selectedEvent } = this.state
     const { form } = this.formRef.props
+    
     form.validateFields((err, values) => {
       if (err) {
+        console.log(err)
         return
       }
       const object = {
         id: selectedEvent.objectId,
         name: selectedEvent.name,
         description: selectedEvent.description,
-        type: selectedEvent.propType === 'property' ? 2 : 3,
-        paramValue: selectedEvent.paramValue,
-        eventValue: values.event,
+        type: 3,
+        paramValue: values.event,
         owner: entity.id
       }
       if (selectedEvent.objectId) {
@@ -90,6 +91,7 @@ class PropEventsBlock extends Component {
   handleSaveProp = prop => {
     const { entity } = this.props
     const { selectedProperty } = this.state
+    
     if (objectsPropsName.includes(prop.property)) {
       console.log('objects props')
       const editProp = objectsPropsName.indexOf(prop.property)
@@ -106,9 +108,8 @@ class PropEventsBlock extends Component {
         id: selectedProperty.objectId,
         name: selectedProperty.name,
         description: selectedProperty.description,
-        type: selectedProperty.propType === 'property' ? 2 : 3,
+        type: 2,
         paramValue: prop.value,
-        eventValue: selectedProperty.eventValue,
         owner: entity.id
       }
       if (selectedProperty.objectId) {
@@ -147,7 +148,6 @@ class PropEventsBlock extends Component {
         ...property,
         objectId: entityProp ? entityProp.id : null,
         paramValue: entityProp ? entityProp.paramValue : property.defaultValue,
-        eventValue: entityProp ? entityProp.eventValue : property.defaultValue,
         default: !entityProp
       }
     })
@@ -168,7 +168,6 @@ class PropEventsBlock extends Component {
         ...event,
         objectId: entityEvents ? entityEvents.id : null,
         paramValue: entityEvents ? entityEvents.paramValue : event.defaultValue,
-        eventValue: entityEvents ? entityEvents.eventValue : event.defaultValue,
         default: !entityEvents
       }
     })
@@ -230,7 +229,7 @@ class PropEventsBlock extends Component {
       ...this.getEvents().map(item => ({
         key: item.id,
         property: item.name,
-        value: item.eventValue,
+        value: item.paramValue,
         default: item.default,
         ...item
       }))
@@ -288,8 +287,7 @@ PropEventsBlock.propTypes = {
       id: PropTypes.number,
       type: PropTypes.number,
       name: PropTypes.string,
-      paramValue: PropTypes.string,
-      eventValue: PropTypes.string
+      paramValue: PropTypes.string
     })
   ).isRequired,
   properties: PropTypes.array,

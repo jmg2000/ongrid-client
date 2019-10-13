@@ -76,7 +76,7 @@ const event = (state = {}, action) => {
     case C.MODIFY_OBJECT_EVENT:
       return {
         ...state,
-        eventValue: action.payload.eventValue
+        paramValue: action.payload.paramValue
       }
     default:
       return state
