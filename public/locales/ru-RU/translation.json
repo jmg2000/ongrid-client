@@ -123,7 +123,10 @@
     "close": "Закрыть",
     "save": "Сохранить",
     "fieldType": "Тип поля",
-    "fieldSize": "Размер поля"
+    "fieldTypeMsg": "Пожалуйста укажите тип поля",
+    "fieldDataType": "Тип данных поля",
+    "fieldDataTypeMsg": "Пожалуйста укажите тип данных",
+    "fieldDataSize": "Размер данных поля"
   },
   "configTypes": {
     "configTitle": "Конфигурация",

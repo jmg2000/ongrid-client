@@ -123,7 +123,10 @@
     "close": "Close",
     "save": "Save",
     "fieldType": "Field type",
-    "fieldSize": "Field size"
+    "fieldTypeMsg": "Please specify field type",
+    "fieldDataType": "Field data type",
+    "fieldDataTypeMsg": "Please specify field data type",
+    "fieldDataSize": "Field data size"
   },
   "configTypes": {
     "configTitle": "Configuration",

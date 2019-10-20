@@ -179,7 +179,8 @@ class Configuration extends Component {
         type: parentEntity ? (parentEntity.type === 1 ? 0 : curFolder) : curFolder,
         description: values.description,
         fieldType: values.fieldType,
-        fieldSize: values.fieldSize,
+        fieldDataType: values.fieldDataType,
+        fieldDataSize: values.fieldDataSize,
         owner
       }
       console.log(newObject)

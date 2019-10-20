@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Table, Input, Form, Select, Upload, Button, Icon } from 'antd'
+import { Table, Input, Form, Select, Upload, Button, Icon, Modal, message } from 'antd'
+import axios from 'axios'
 
 import './editable-table.css'
 
 const { Option } = Select
+const { Dragger } = Upload
 
 const EditableContext = React.createContext()
 
@@ -31,13 +33,15 @@ function defaultGetValueFromEvent (e) {
 
 class EditableCell extends Component {
   state = {
-    editing: false
+    editing: false,
+    visible: false,
+    resourceFileName: null
   }
 
   toggleEdit = () => {
     const editing = !this.state.editing
     this.setState({ editing }, () => {
-      if (editing) {
+      if (editing && this.input) {
         this.input.focus()
       }
     })
@@ -45,6 +49,7 @@ class EditableCell extends Component {
 
   save = e => {
     const { record, handleSave, dataIndex } = this.props
+    console.log('save')
     this.form.validateFields((error, values) => {
       if (error && error[e.currentTarget.id]) {
         return
@@ -54,6 +59,8 @@ class EditableCell extends Component {
       handleSave({ ...record, ...values })
     })
   }
+
+  
 
   getInputByType = ({ valueType, values }) => {
     console.log(valueType, values)
@@ -71,19 +78,14 @@ class EditableCell extends Component {
         )
       case 'color':
         return <Input ref={node => (this.input = node)} type='color' onPressEnter={this.save} onBlur={this.save} />
-      // case 'filename':
-      // case 'picture':
-      //   const props = {
-      //     name: 'file',
-      //     action: '/api/resource'
-      //   }
-      //   return (
-      //     <Upload {...props} onChange={this.save}>
-      //       <Button ref={node => (this.input = node)}>
-      //         <Icon type='upload' /> Click to Upload
-      //       </Button>
-      //     </Upload>
-      //   )
+      case 'filename':
+      case 'picture':
+        return (
+          <Input
+            ref={node => (this.input = node)}
+            onDoubleClick={() => this.toggleModal(true)}
+          />
+        )
       default:
         return <Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />
     }
@@ -103,7 +105,7 @@ class EditableCell extends Component {
             // }
           ],
           initialValue: record[dataIndex]
-          //getValueFromEvent: defaultGetValueFromEvent
+          // getValueFromEvent: defaultGetValueFromEvent
         })(this.getInputByType(record))}
       </Form.Item>
     ) : (
@@ -113,12 +115,70 @@ class EditableCell extends Component {
     )
   }
 
+  toggleModal = visible => {
+    this.setState({ visible })
+    if (!visible) {
+      this.save()
+    }
+  }
+
+  onOkModal = () => {
+    const { dataIndex } = this.props
+
+    this.form.setFieldsValue({
+      [dataIndex]: this.state.resourceFileName
+    })
+    this.toggleModal(false)
+  }
+
+  uploadFile = (file) => {
+    const formData = new FormData()
+    formData.append('resource', file)
+    console.log(file)
+    axios
+      .post('/api/configuration/resource', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(response => {
+        console.log(response)
+        this.setState({ resourceFileName: response.data.fileName })
+      })
+      .catch(err => console.log(err))
+  }
+
   render () {
     const { editable, dataIndex, title, record, index, handleSave, children, validator, ...restProps } = this.props
+
     return (
-      <td {...restProps}>
-        {editable ? <EditableContext.Consumer>{this.renderCell}</EditableContext.Consumer> : children}
-      </td>
+      <React.Fragment>
+        <td {...restProps}>
+          {editable ? <EditableContext.Consumer>{this.renderCell}</EditableContext.Consumer> : children}
+        </td>
+        <Modal
+          title='Upload file'
+          visible={this.state.visible}
+          onOk={this.onOkModal}
+          onCancel={() => this.toggleModal(false)}
+        >
+          <Dragger
+            multiple={false}
+            beforeUpload={file => {
+              this.uploadFile(file)
+              return false
+            }}
+          >
+            <p className='ant-upload-drag-icon'>
+              <Icon type='inbox' />
+            </p>
+            <p className='ant-upload-text'>Click or drag file to this area to upload</p>
+            <p className='ant-upload-hint'>
+              Support for a single or bulk upload. Strictly prohibit from uploading company data or other band files
+            </p>
+          </Dragger>
+        </Modal>
+      </React.Fragment>
     )
   }
 }
