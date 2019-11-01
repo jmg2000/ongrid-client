@@ -30,6 +30,8 @@ import Messages from './components/client/messages/Messages'
 import WorkPlaces from './components/client/WorkPlaces'
 import Download from './components/client/Download'
 
+import Editor from './components/client/configurator/TemplateEditor'
+
 import AdminPage from './components/admin/Admin'
 
 import './App.css'
@@ -117,6 +119,7 @@ class App extends Component {
                 <PrivateRoute exact path='/admin' component={AdminPage} />
                 <PrivateRoute exact path='/configuration' component={Configurator} />
                 <PrivateRoute exact path='/download' component={Download} />
+                <PrivateRoute exact path='/editor' component={Editor} />
               </Switch>
               <Footer />
             </div>
