@@ -64,7 +64,7 @@ class PropEventsBlock extends Component {
     const { entity } = this.props
     const { selectedEvent } = this.state
     const { form } = this.formRef.props
-    
+
     form.validateFields((err, values) => {
       if (err) {
         console.log(err)
@@ -91,7 +91,7 @@ class PropEventsBlock extends Component {
   handleSaveProp = prop => {
     const { entity } = this.props
     const { selectedProperty } = this.state
-    
+
     if (objectsPropsName.includes(prop.property)) {
       console.log('objects props')
       const editProp = objectsPropsName.indexOf(prop.property)
@@ -141,7 +141,9 @@ class PropEventsBlock extends Component {
   getProperties = () => {
     const { properties, entity } = this.props
     // выбыраем все св-ва по умолчанию для данного типа объекта
-    const defaultProps = this.props.defaultProps.filter(p => p.type === entity.type && p.propType === 'property')
+    const defaultProps = this.props.defaultProps.filter(
+      p => p.type === entity.type && p.paramType === entity.paramType && p.propType === 'property'
+    )
     return defaultProps.map(property => {
       const entityProp = properties.find(p => p.name.toLowerCase() === property.name.toLowerCase())
       return {
@@ -157,7 +159,9 @@ class PropEventsBlock extends Component {
     const { events, entity } = this.props
     // console.log(events)
     // выбыраем все события по умолчанию для данного типа объекта
-    const defaultProps = this.props.defaultProps.filter(p => p.type === entity.type && p.propType === 'event')
+    const defaultProps = this.props.defaultProps.filter(
+      p => p.type === entity.type && p.paramType === entity.paramType && p.propType === 'event'
+    )
     return defaultProps.map(event => {
       // console.log(event)
       let entityEvents
