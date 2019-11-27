@@ -1,0 +1,27 @@
+.IconCard {
+  width: 86px;
+  display: flex;
+  flex-flow: column;
+  padding: 4px 0 0 0;
+}
+
+.IconCard:hover {
+  /*border: 1px solid gray;*/
+  background: #9ad0ff;
+}
+
+.IconCard_Selected {
+  /*border: 1px solid gray;*/
+  background: #cecece;
+}
+
+.IconCard_Icon {
+  font-size: 32px;
+  margin: 0 auto;
+}
+
+.IconCard_Label {
+  text-align: center;
+  line-height: 24px;
+  font-size: 0.7rem;
+}

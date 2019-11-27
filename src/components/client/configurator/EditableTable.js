@@ -1,12 +1,16 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Table, Input, Form, Select, Upload, Button, Icon, Modal, message } from 'antd'
+import { Table, Input, Form, Select, Upload, Button, Icon, Modal, message, Tabs } from 'antd'
 import axios from 'axios'
+
+import IconCard from './IconCard'
+import iconList from './IconsArray'
 
 import './editable-table.css'
 
 const { Option } = Select
 const { Dragger } = Upload
+const { TabPane } = Tabs
 
 const EditableContext = React.createContext()
 
@@ -34,8 +38,10 @@ function defaultGetValueFromEvent (e) {
 class EditableCell extends Component {
   state = {
     editing: false,
-    visible: false,
-    resourceFileName: null
+    visibleUploadModal: false,
+    visibleIconModal: false,
+    resourceFileName: null,
+    selectedIcon: null
   }
 
   toggleEdit = () => {
@@ -60,8 +66,6 @@ class EditableCell extends Component {
     })
   }
 
-  
-
   getInputByType = ({ valueType, values }) => {
     console.log(valueType, values)
     switch (valueType) {
@@ -80,12 +84,9 @@ class EditableCell extends Component {
         return <Input ref={node => (this.input = node)} type='color' onPressEnter={this.save} onBlur={this.save} />
       case 'filename':
       case 'picture':
-        return (
-          <Input
-            ref={node => (this.input = node)}
-            onDoubleClick={() => this.toggleModal(true)}
-          />
-        )
+        return <Input ref={node => (this.input = node)} onDoubleClick={() => this.toggleUploadModal(true)} />
+      case 'icon':
+        return <Input ref={node => (this.input = node)} onDoubleClick={() => this.toggleIconModal(true)} />
       default:
         return <Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />
     }
@@ -115,23 +116,39 @@ class EditableCell extends Component {
     )
   }
 
-  toggleModal = visible => {
-    this.setState({ visible })
+  toggleUploadModal = visible => {
+    this.setState({ visibleUploadModal: visible })
     if (!visible) {
       this.save()
     }
   }
 
-  onOkModal = () => {
+  toggleIconModal = visible => {
+    this.setState({ visibleIconModal: visible })
+    if (!visible) {
+      this.save()
+    }
+  }
+
+  onOkUploadModal = () => {
     const { dataIndex } = this.props
 
     this.form.setFieldsValue({
       [dataIndex]: this.state.resourceFileName
     })
-    this.toggleModal(false)
+    this.toggleUploadModal(false)
   }
 
-  uploadFile = (file) => {
+  onOkIconModal = () => {
+    const { dataIndex } = this.props
+
+    this.form.setFieldsValue({
+      [dataIndex]: this.state.selectedIcon
+    })
+    this.toggleIconModal(false)
+  }
+
+  uploadFile = file => {
     const formData = new FormData()
     formData.append('resource', file)
     console.log(file)
@@ -148,6 +165,10 @@ class EditableCell extends Component {
       .catch(err => console.log(err))
   }
 
+  onSelectIcon = icon => {
+    this.setState({ selectedIcon: icon })
+  }
+
   render () {
     const { editable, dataIndex, title, record, index, handleSave, children, validator, ...restProps } = this.props
 
@@ -158,9 +179,9 @@ class EditableCell extends Component {
         </td>
         <Modal
           title='Upload file'
-          visible={this.state.visible}
-          onOk={this.onOkModal}
-          onCancel={() => this.toggleModal(false)}
+          visible={this.state.visibleUploadModal}
+          onOk={this.onOkUploadModal}
+          onCancel={() => this.toggleUploadModal(false)}
         >
           <Dragger
             multiple={false}
@@ -177,6 +198,30 @@ class EditableCell extends Component {
               Support for a single or bulk upload. Strictly prohibit from uploading company data or other band files
             </p>
           </Dragger>
+        </Modal>
+        <Modal
+          title='Select Icon'
+          visible={this.state.visibleIconModal}
+          onOk={this.onOkIconModal}
+          onCancel={() => this.toggleIconModal(false)}
+        >
+          <Tabs defaultActiveKey='1'>
+            {iconList.map(tab => (
+              <TabPane tab={tab.tabName} key={tab.id}>
+                <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                  {tab.iconList.map((icon, idx) => (
+                    <IconCard
+                      key={idx}
+                      iconName={icon}
+                      caption={icon}
+                      onClick={this.onSelectIcon}
+                      selected={icon === this.state.selectedIcon}
+                    />
+                  ))}
+                </div>
+              </TabPane>
+            ))}
+          </Tabs>
         </Modal>
       </React.Fragment>
     )

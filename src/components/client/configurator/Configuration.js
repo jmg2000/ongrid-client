@@ -23,10 +23,14 @@ export const ConfigObjectType = Object.freeze({
   Table: 1,
   Template: 4,
   Menu: 6,
-  Query: 7,
+  Toolbar: 7,
   Field: 8,
   Configuration: 10
 })
+
+const ToolbarButton = 5
+const SubMenu = 4
+const MenuItem = 5
 
 const getDefaultProps = () => axios.get('/api/configuration/default-props')
 
@@ -116,12 +120,14 @@ class Configuration extends Component {
   handlerEntityDblClick (entity) {
     const { entityChain } = this.state
     const { configuration } = this.props
+
     console.log('DBL:', entity)
     // если это последний уровнеь вложенности
     if (configuration.filter(object => object.owner === entity.id).length === 0) {
       switch (entity.type) {
         case ConfigObjectType.Table:
         case ConfigObjectType.Menu:
+        case ConfigObjectType.Toolbar:
           this.setState({
             selectedEntity: entity,
             parentEntity: entity,
@@ -163,21 +169,28 @@ class Configuration extends Component {
 
   // нажате на кнопку "Создать"
   handleCreateEntity () {
-    const { form } = this.formRef.props
     const { curFolder, entityChain, parentEntity } = this.state
+    const { configuration } = this.props
+    const { form } = this.formRef.props
+
     form.validateFields((err, values) => {
       if (err) {
-        console.log(err)
-        return
+        return console.log(err)
       }
       let owner
       if (entityChain.length > 0) {
         owner = entityChain[entityChain.length - 1].id
       }
+      let paramType = 0
+      if (owner) {
+        const ownerObject = configuration.find(item => item.id === owner)
+        paramType = this.getParamTypeFromOwner(ownerObject)
+      }
       const newObject = {
         name: values.name,
         type: parentEntity ? (parentEntity.type === 1 ? 0 : curFolder) : curFolder,
         description: values.description,
+        paramType,
         fieldType: values.fieldType,
         fieldDataType: values.fieldDataType,
         fieldDataSize: values.fieldDataSize,
@@ -188,6 +201,23 @@ class Configuration extends Component {
       form.resetFields()
       this.setState({ showModal: false })
     })
+  }
+
+  getParamTypeFromOwner = owner => {
+    console.log(owner)
+    switch (owner.type) {
+      case ConfigObjectType.Toolbar:
+        return ToolbarButton
+      case ConfigObjectType.Menu:
+        switch (owner.paramType) {
+          case 0:
+            return SubMenu
+          case 4:
+            return MenuItem
+        }
+      default:
+        return 0
+    }
   }
 
   handleShowModal = () => {

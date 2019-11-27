@@ -52,7 +52,9 @@ const CreateObjectForm = Form.create({ name: 'createObjectModal' })(
                 ]
               })(<Input />)}
             </Form.Item>
-            <Form.Item label={t('configurator.desc')} style={{ marginBottom: '5px' }}>{getFieldDecorator('description')(<Input />)}</Form.Item>
+            <Form.Item label={t('configurator.desc')} style={{ marginBottom: '5px' }}>
+              {getFieldDecorator('description')(<Input />)}
+            </Form.Item>
             {isField && (
               <React.Fragment>
                 <Form.Item label={t('configurator.fieldType')} style={{ marginBottom: '5px' }}>

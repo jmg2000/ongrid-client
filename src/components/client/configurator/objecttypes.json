@@ -19,8 +19,8 @@
     },
     {
       "id": 7,
-      "title": "configTypes.queryTitle",
-      "description": "configTypes.queryDesc",
+      "title": "configTypes.toolbarTitle",
+      "description": "configTypes.toolbarDesc",
       "icon": "database"
     },
     {
