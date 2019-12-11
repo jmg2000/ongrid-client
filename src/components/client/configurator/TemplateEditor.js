@@ -2,7 +2,16 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Tabs, List, Icon, Button } from 'antd'
-import { Editor } from '@tinymce/tinymce-react'
+
+import FroalaEditor from 'react-froala-wysiwyg'
+
+import 'froala-editor/js/languages/ru.js'
+
+// Require Editor CSS files.
+import 'froala-editor/css/froala_style.min.css'
+import 'froala-editor/css/froala_editor.pkgd.min.css'
+
+import './TemplateEditor.css'
 
 const { TabPane } = Tabs
 
@@ -10,60 +19,38 @@ class TemplateEditor extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
-      content: ''
+      model: 'Example text',
+      froalaInstance: null
     }
   }
 
-  handleEditorChange = (content, editor) => {
-    // console.log(content)
-    this.setState({ content })
+  insertText = text => {
+    console.log('insert')
+    this.froalaInstance.html.insert(text, true)
   }
 
-  insertText = () => {
-    const myField = document.getElementById('tinymce')
-    console.log(myField)
-    const myValue = '123!!!'
-    if (myField.selectionStart || myField.selectionStart == '0') {
-      var startPos = myField.selectionStart
-      var endPos = myField.selectionEnd
-      myField.value =
-        myField.value.substring(0, startPos) + myValue + myField.value.substring(endPos, myField.value.length)
-    } else {
-      myField.value += myValue
-    }
+  handleModelChange = model => {
+    this.setState({ model })
   }
 
   render () {
     const tabs = ['Rents.CarLessor', 'Rents.Comment']
+    const setFloalaInstance = instance => {
+      this.froalaInstance = instance
+    }
+    const editorConfig = {
+      events: {
+        initialized: function () {
+          setFloalaInstance(this)
+        }
+      }
+    }
 
     return (
       <div className='container-fluid'>
         <div className='row'>
-          <Button type='default' onClick={this.insertText}>
-            Insert
-          </Button>
-        </div>
-        <div className='row'>
           <div className='col-sm-9'>
-            <Editor
-              apiKey='go7ou3haeeu8jf378tj61mhd40d58r08ghzuv9gini28u926'
-              initialValue='<p>This is the initial content of the editor</p>'
-              value={this.state.content}
-              init={{
-                height: 500,
-                menubar: true,
-                plugins: [
-                  'advlist autolink lists link image charmap print preview anchor',
-                  'searchreplace visualblocks code fullscreen',
-                  'insertdatetime media table paste code help wordcount'
-                ],
-                toolbar:
-                  'undo redo | formatselect | bold italic backcolor | \
-             alignleft aligncenter alignright alignjustify | \
-             bullist numlist outdent indent | removeformat | help'
-              }}
-              onEditorChange={this.handleEditorChange}
-            />
+            <FroalaEditor config={editorConfig} model={this.state.model} onModelChange={this.handleModelChange} />
           </div>
           <div className='col-sm-3'>
             <Tabs defaultActiveKey='tabs' key='tabs'>
@@ -74,8 +61,10 @@ class TemplateEditor extends React.Component {
                   dataSource={tabs}
                   renderItem={item => (
                     <List.Item>
-                      <Button type='default' icon='double-left' />
-                      <span style={{ marginLeft: '5px' }}>{item}</span>
+                      <Button type='default' onClick={() => this.insertText(`{{${item}}}`)}>
+                        <Icon type='double-left' style={{ position: 'absolute', top: '6px', left: '6px' }} />
+                        {item}
+                      </Button>
                     </List.Item>
                   )}
                 />
@@ -84,6 +73,12 @@ class TemplateEditor extends React.Component {
                 567
               </TabPane>
             </Tabs>
+          </div>
+        </div>
+        <div className='row'>
+          <div className='TemplateEditor__MainButtons'>
+            <Button type='primary'>Save</Button>
+            <Button type='default'>Cancel</Button>
           </div>
         </div>
       </div>

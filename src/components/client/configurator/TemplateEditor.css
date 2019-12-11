@@ -20,3 +20,9 @@
   border: 1px solid #F1F1F1;
   height: 100px;
 }
+.TemplateEditor__MainButtons {
+  padding: 10px;
+}
+.TemplateEditor__MainButtons > button {
+  margin: 0 5px;
+}

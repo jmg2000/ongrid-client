@@ -5,6 +5,7 @@ import axios from 'axios'
 
 import IconCard from './IconCard'
 import iconList from './IconsArray'
+import SetsModal from './SetsModal'
 
 import './editable-table.css'
 
@@ -40,8 +41,10 @@ class EditableCell extends Component {
     editing: false,
     visibleUploadModal: false,
     visibleIconModal: false,
+    visibleSetsModal: false,
     resourceFileName: null,
-    selectedIcon: null
+    selectedIcon: null,
+    currentSet: null
   }
 
   toggleEdit = () => {
@@ -66,7 +69,7 @@ class EditableCell extends Component {
     })
   }
 
-  getInputByType = ({ valueType, values }) => {
+  getInputByType = ({ valueType, values }, value) => {
     console.log(valueType, values)
     switch (valueType) {
       case 'bool':
@@ -87,6 +90,8 @@ class EditableCell extends Component {
         return <Input ref={node => (this.input = node)} onDoubleClick={() => this.toggleUploadModal(true)} />
       case 'icon':
         return <Input ref={node => (this.input = node)} onDoubleClick={() => this.toggleIconModal(true)} />
+      case 'set':
+        return <Input ref={node => (this.input = node)} onDoubleClick={() => this.showSetsModal(value)} />
       default:
         return <Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />
     }
@@ -96,6 +101,7 @@ class EditableCell extends Component {
     this.form = form
     const { children, dataIndex, record, title, validator } = this.props
     const { editing } = this.state
+
     return editing ? (
       <Form.Item style={{ margin: 0 }}>
         {form.getFieldDecorator(dataIndex, {
@@ -107,7 +113,7 @@ class EditableCell extends Component {
           ],
           initialValue: record[dataIndex]
           // getValueFromEvent: defaultGetValueFromEvent
-        })(this.getInputByType(record))}
+        })(this.getInputByType(record, record[dataIndex]))}
       </Form.Item>
     ) : (
       <div className='editable-cell-value-wrap' style={{ paddingRight: 24 }} onClick={this.toggleEdit}>
@@ -130,6 +136,18 @@ class EditableCell extends Component {
     }
   }
 
+  toggleSetsModal = visible => {
+    this.setState({ visibleSetsModal: visible })
+    if (!visible) {
+      this.save()
+    }
+  }
+
+  showSetsModal = value => {
+    this.setState({ currentSet: value })
+    this.toggleSetsModal(true)
+  }
+
   onOkUploadModal = () => {
     const { dataIndex } = this.props
 
@@ -146,6 +164,15 @@ class EditableCell extends Component {
       [dataIndex]: this.state.selectedIcon
     })
     this.toggleIconModal(false)
+  }
+
+  onOkSetsModal = values => {
+    const { dataIndex } = this.props
+
+    this.form.setFieldsValue({
+      [dataIndex]: values
+    })
+    this.toggleSetsModal(false)
   }
 
   uploadFile = file => {
@@ -171,6 +198,7 @@ class EditableCell extends Component {
 
   render () {
     const { editable, dataIndex, title, record, index, handleSave, children, validator, ...restProps } = this.props
+    const { visibleSetsModal } = this.state
 
     return (
       <React.Fragment>
@@ -223,6 +251,7 @@ class EditableCell extends Component {
             ))}
           </Tabs>
         </Modal>
+        {visibleSetsModal && <SetsModal visible={visibleSetsModal} onCancel={() => this.toggleSetsModal(false)} onOk={this.onOkSetsModal} initialValue={this.state.currentSet} />}
       </React.Fragment>
     )
   }
