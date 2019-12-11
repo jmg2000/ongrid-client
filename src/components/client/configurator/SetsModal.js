@@ -31,6 +31,13 @@ export class SetsModal extends Component {
     this.props.onOk(this.state.values.join(';').concat(';'))
   }
 
+  handleDeleleValue = idx => {
+    const { values } = this.state
+    console.log(idx)
+    values.splice(idx, 1)
+    this.setState({ values })
+  }
+
   render () {
     const { visible, onOk, onCancel } = this.props
     const { values } = this.state
@@ -47,12 +54,27 @@ export class SetsModal extends Component {
         title: 'Values',
         dataIndex: 'name',
         key: 'name'
+      },
+      {
+        title: 'Action',
+        key: 'action',
+        render: (text, record) => (
+          <Button type='danger' onClick={() => this.handleDeleleValue(record.key)}>
+            Delete
+          </Button>
+        )
       }
     ]
 
     return (
       <Modal title='Create a set of values' visible={visible} onOk={this.handleOk} onCancel={onCancel}>
-        <Table dataSource={dataSource} columns={columns} size='small' pagination={{ pageSize: 50 }} scroll={{ y: 200 }}/>
+        <Table
+          dataSource={dataSource}
+          columns={columns}
+          size='small'
+          pagination={{ pageSize: 50 }}
+          scroll={{ y: 200 }}
+        />
         <Form layout='inline' onSubmit={this.handleSubmit}>
           <Form.Item>{getFieldDecorator('value')(<Input />)}</Form.Item>
           <Form.Item>
