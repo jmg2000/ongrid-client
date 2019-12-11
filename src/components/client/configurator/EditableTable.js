@@ -92,6 +92,8 @@ class EditableCell extends Component {
         return <Input ref={node => (this.input = node)} onDoubleClick={() => this.toggleIconModal(true)} />
       case 'set':
         return <Input ref={node => (this.input = node)} onDoubleClick={() => this.showSetsModal(value)} />
+      case 'template':
+        return <Input ref={node => (this.input = node)} onDoubleClick={() => this.showSetsModal(value)} />
       default:
         return <Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />
     }

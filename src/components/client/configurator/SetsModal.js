@@ -23,6 +23,7 @@ export class SetsModal extends Component {
       if (!err) {
         console.log('Received values of form: ', values)
         this.setState({ values: [...this.state.values, values.value] })
+        this.props.form.resetFields()
       }
     })
   }

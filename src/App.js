@@ -117,7 +117,7 @@ class App extends Component {
                 <PrivateRoute exact path='/messages' component={Messages} />
                 <PrivateRoute exact path='/workplaces' component={WorkPlaces} />
                 <PrivateRoute exact path='/admin' component={AdminPage} />
-                <PrivateRoute exact path='/configuration' component={Configurator} />
+                <PrivateRoute path='/configuration' component={Configurator} />
                 <PrivateRoute exact path='/download' component={Download} />
                 <PrivateRoute exact path='/editor' component={Editor} />
               </Switch>

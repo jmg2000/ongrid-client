@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import ReactLoading from 'react-loading'
 import { withNamespaces } from 'react-i18next'
 import { Table, PageHeader, Breadcrumb, Icon, List, Button } from 'antd'
+import queryString from 'query-string'
 // actions
 import {
   fetchConfiguration,
@@ -39,16 +40,19 @@ const ButtonGroup = Button.Group
 class Configuration extends Component {
   constructor (props) {
     super(props)
+    const query = queryString.parse(props.location.search)
+    console.log(query)
     this.state = {
       defaultProps: [], // данные из igo$props
       loading: true,
       error: null,
-      curFolder: 10, // текущая папка. objectType
+      curFolder: query.objecttype ? parseInt(query.objecttype) : 10, // текущая папка. objectType
       entityChain: [],
       selectedEntity: null, // выбраный объект конфигурации
       parentEntity: null, // объект предыдущего уровня
       objectsList: [], // список отображаемых в данный момент объектов конфигурации
-      showModal: false
+      showModal: false,
+      firstShow: true
     }
     this.handlerFolderSelect = this.handlerFolderSelect.bind(this)
     this.handlerEntityClick = this.handlerEntityClick.bind(this)
@@ -58,7 +62,6 @@ class Configuration extends Component {
   }
 
   componentDidMount () {
-    this.setState({ loading: true })
     this.props.fetchConfiguration()
     getDefaultProps()
       .then(properties => {
@@ -76,7 +79,20 @@ class Configuration extends Component {
   }
 
   componentDidUpdate () {
+    const { loading, firstShow, objectsList } = this.state
+
     console.log('Configurator didUpdate')
+    if (!loading && firstShow) {
+      const query = queryString.parse(this.props.location.search)
+      if (query.objecttype && query.objectid) {
+        const entity = objectsList.find(item => item.id === parseInt(query.objectid))
+        console.log(entity)
+        this.setState({
+          firstShow: false,
+          selectedEntity: entity
+        })
+      }
+    }
   }
 
   static getDerivedStateFromProps (nextProps, prevState) {
@@ -318,77 +334,79 @@ class Configuration extends Component {
     const { curFolder, defaultProps, selectedEntity, objectsList, parentEntity } = this.state
     const { loading, t } = this.props
 
+    if (loading) {
+      return (
+        <div className='loader'>
+          <ReactLoading type='spinningBubbles' color='#007bff' height={'15%'} width={'15%'} />
+        </div>
+      )
+    }
+
     return (
       <React.Fragment>
-        {loading ? (
-          <div className='loader'>
-            <ReactLoading type='spinningBubbles' color='#007bff' height={'15%'} width={'15%'} />
-          </div>
-        ) : (
-          <div className='container-fluid'>
-            <PageHeader title={t('configurator.objectManager')} />
-            <section className='configuration'>
-              <div className='row'>
-                <div className='col-sm-2'>
-                  <div className='row'>
-                    <h6>{t('configurator.objectType')}</h6>
-                  </div>
-                  <div className='row configurator__folders-list'>
-                    <List
-                      bordered
-                      dataSource={folders}
-                      renderItem={item => (
-                        <List.Item>
-                          <Icon type={item.icon} />
-                          <List.Item.Meta
-                            avatar={<Icon type={item.icon} />}
-                            title={
-                              <a href='#' onClick={() => this.handlerFolderSelect(item.id)}>
-                                {t(item.title)}
-                              </a>
-                            }
-                            description={t(item.description)}
-                          />
-                        </List.Item>
-                      )}
-                    />
-                  </div>
+        <div className='container-fluid'>
+          <PageHeader title={t('configurator.objectManager')} />
+          <section className='configuration'>
+            <div className='row'>
+              <div className='col-sm-2'>
+                <div className='row'>
+                  <h6>{t('configurator.objectType')}</h6>
                 </div>
-                <div className='col-sm-7'>
-                  <div className='row'>
-                    <div className='col-sm-8'>{this.getBreatcrumbs(t)}</div>
-                    <div className='col-sm-4'>
-                      <div className='float-right'>
-                        <ButtonGroup>
-                          <Button type='primary' onClick={this.handleShowModal}>
-                            {t('configurator.create')}
-                          </Button>
-                          <Button type='danger' onClick={this.handleDeleteEntity}>
-                            {t('configurator.delete')}
-                          </Button>
-                        </ButtonGroup>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='row configurator__objects-list'>
-                    <div className='col-sm-12'>{this.getObjectList(t, objectsList, selectedEntity)}</div>
-                  </div>
-                </div>
-                <div className='col-sm-3'>
-                  {selectedEntity && (
-                    <PropEventsBlock
-                      key={selectedEntity.id}
-                      entity={selectedEntity}
-                      defaultProps={defaultProps}
-                      objectsList={objectsList}
-                      // onEntityChange={this.handleOnEntityChange}
-                    />
-                  )}
+                <div className='row configurator__folders-list'>
+                  <List
+                    bordered
+                    dataSource={folders}
+                    renderItem={item => (
+                      <List.Item>
+                        <Icon type={item.icon} />
+                        <List.Item.Meta
+                          avatar={<Icon type={item.icon} />}
+                          title={
+                            <a href='#' onClick={() => this.handlerFolderSelect(item.id)}>
+                              {t(item.title)}
+                            </a>
+                          }
+                          description={t(item.description)}
+                        />
+                      </List.Item>
+                    )}
+                  />
                 </div>
               </div>
-            </section>
-          </div>
-        )}
+              <div className='col-sm-7'>
+                <div className='row'>
+                  <div className='col-sm-8'>{this.getBreatcrumbs(t)}</div>
+                  <div className='col-sm-4'>
+                    <div className='float-right'>
+                      <ButtonGroup>
+                        <Button type='primary' onClick={this.handleShowModal}>
+                          {t('configurator.create')}
+                        </Button>
+                        <Button type='danger' onClick={this.handleDeleteEntity}>
+                          {t('configurator.delete')}
+                        </Button>
+                      </ButtonGroup>
+                    </div>
+                  </div>
+                </div>
+                <div className='row configurator__objects-list'>
+                  <div className='col-sm-12'>{this.getObjectList(t, objectsList, selectedEntity)}</div>
+                </div>
+              </div>
+              <div className='col-sm-3'>
+                {selectedEntity && (
+                  <PropEventsBlock
+                    key={selectedEntity.id}
+                    entity={selectedEntity}
+                    defaultProps={defaultProps}
+                    objectsList={objectsList}
+                    // onEntityChange={this.handleOnEntityChange}
+                  />
+                )}
+              </div>
+            </div>
+          </section>
+        </div>
         <CreateObjectModal
           wrappedComponentRef={this.saveFormRef}
           visible={this.state.showModal}
