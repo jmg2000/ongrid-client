@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Tabs, List, Icon, Button } from 'antd'
+import { Tabs, List, Icon, Button, Popconfirm } from 'antd'
 import axios from 'axios'
 import queryString from 'query-string'
 import ReactLoading from 'react-loading'
@@ -40,7 +40,10 @@ class TemplateEditor extends React.Component {
       froalaInstance: null,
       loading: true,
       template: null,
-      fileNameProp: null
+      fileNameProp: null,
+      changed: false,
+      visible: false,
+      bookmarks: []
     }
   }
 
@@ -59,22 +62,24 @@ class TemplateEditor extends React.Component {
           .then(response => {
             console.log(response.data)
             let property
+            let bookmarks
             for (const prop of response.data.props) {
-              console.log(prop)
               if (prop.id === parseInt(query.objectid)) {
                 property = prop
-                break
+              }
+              if (prop.name === 'Bookmarks') {
+                bookmarks = prop.paramValue ? prop.paramValue.slice(0, -1).split(';') : []
               }
             }
             console.log(property)
             axios
               .get(`/api/template/${property.paramValue}`)
               .then(response => {
-                console.log(response.data)
                 this.setState({
                   model: response.data,
                   template,
                   fileNameProp: property,
+                  bookmarks,
                   loading: false
                 })
               })
@@ -102,7 +107,10 @@ class TemplateEditor extends React.Component {
   }
 
   handleModelChange = model => {
-    this.setState({ model })
+    this.setState({
+      changed: true,
+      model
+    })
   }
 
   handleSaveTemplate = () => {
@@ -128,17 +136,37 @@ class TemplateEditor extends React.Component {
         } else {
           this.props.addObjectProp(property)
         }
+        this.setState({ changed: false })
       })
       .catch(err => console.log(err))
   }
 
   handleReturnToConfigurator = () => {
-    this.props.history.push(`/configuration?objecttype=4&objectid=${this.state.template.id}`)
+    this.setState({ visible: false })
+    this.props.history.push(
+      `/configuration?objecttype=4&objectid=${this.state.template.id}`
+    )
+  }
+
+  handlePopVisibleChange = visible => {
+    if (!visible) {
+      this.setState({ visible })
+    }
+    if (!this.state.changed) {
+      this.handleReturnToConfigurator()
+    } else {
+      this.setState({ visible: true })
+    }
+  }
+
+  handlePopCancel = () => {
+    this.setState({ visible: false })
   }
 
   render () {
-    const { loading } = this.state
-    const tabs = ['Rents.CarLessor', 'Rents.Comment']
+    const { loading, changed, visible, bookmarks } = this.state
+
+    console.log(changed)
     const setFloalaInstance = instance => {
       this.froalaInstance = instance
     }
@@ -179,7 +207,7 @@ class TemplateEditor extends React.Component {
                 <List
                   size='small'
                   bordered
-                  dataSource={tabs}
+                  dataSource={bookmarks}
                   renderItem={item => (
                     <List.Item>
                       <Button
@@ -208,10 +236,24 @@ class TemplateEditor extends React.Component {
         </div>
         <div className='row'>
           <div className='TemplateEditor__MainButtons'>
-            <Button type='primary' onClick={this.handleSaveTemplate}>
+            <Button
+              type='primary'
+              disabled={!changed}
+              onClick={this.handleSaveTemplate}
+            >
               Save
             </Button>
-            <Button type='default' onClick={this.handleReturnToConfigurator}>Return to Configuration editor</Button>
+            <Popconfirm
+              title='Template has been modified but not saved'
+              visible={visible}
+              onVisibleChange={this.handlePopVisibleChange}
+              onConfirm={this.handleReturnToConfigurator}
+              onCancel={this.handlePopCancel}
+              okText='Return to Configuration'
+              cancelText='To stay'
+            >
+              <Button type='default'>Return to Configuration editor</Button>
+            </Popconfirm>
           </div>
         </div>
       </div>
@@ -223,4 +265,8 @@ const mapStateToProps = state => ({
   configuration: state.configuration
 })
 
-export default connect(mapStateToProps, { fetchConfiguration, addObjectProp, modifyObjectProp })(withRouter(TemplateEditor))
+export default connect(mapStateToProps, {
+  fetchConfiguration,
+  addObjectProp,
+  modifyObjectProp
+})(withRouter(TemplateEditor))
