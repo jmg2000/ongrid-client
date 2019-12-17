@@ -150,7 +150,8 @@ class PropEventsBlock extends Component {
         ...property,
         objectId: entityProp ? entityProp.id : null,
         paramValue: entityProp ? entityProp.paramValue : property.defaultValue,
-        default: !entityProp
+        default: !entityProp,
+        owner: entity.id
       }
     })
   }
@@ -172,7 +173,8 @@ class PropEventsBlock extends Component {
         ...event,
         objectId: entityEvents ? entityEvents.id : null,
         paramValue: entityEvents ? entityEvents.paramValue : event.defaultValue,
-        default: !entityEvents
+        default: !entityEvents,
+        owner: entity.id
       }
     })
   }

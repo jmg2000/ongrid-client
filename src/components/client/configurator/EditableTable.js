@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Table, Input, Form, Select, Upload, Button, Icon, Modal, message, Tabs } from 'antd'
+import { Table, Input, Form, Select, Upload, Button, Icon, Modal, message, Tabs, Popconfirm } from 'antd'
 import axios from 'axios'
+import { withRouter } from 'react-router-dom'
 
 import IconCard from './IconCard'
 import iconList from './IconsArray'
@@ -70,6 +71,8 @@ class EditableCell extends Component {
   }
 
   getInputByType = ({ valueType, values }, value) => {
+    const { record } = this.props
+
     console.log(valueType, values)
     switch (valueType) {
       case 'bool':
@@ -93,7 +96,17 @@ class EditableCell extends Component {
       case 'set':
         return <Input ref={node => (this.input = node)} onDoubleClick={() => this.showSetsModal(value)} />
       case 'template':
-        return <Input ref={node => (this.input = node)} onDoubleClick={() => this.showSetsModal(value)} />
+        return (
+          <Popconfirm
+            title='Are you sure edit template?'
+            onConfirm={() => this.onEditTemplate(record)}
+            okText='Yes'
+            cancelText='No'
+            >
+              <Input ref={node => (this.input = node)} />
+            </Popconfirm>
+        )
+        
       default:
         return <Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />
     }
@@ -175,6 +188,11 @@ class EditableCell extends Component {
       [dataIndex]: values
     })
     this.toggleSetsModal(false)
+  }
+
+  onEditTemplate = record => {
+    console.log(record)
+    this.props.history.push(`/editor?objectid=${record.objectId}&owner=${record.owner}`)
   }
 
   uploadFile = file => {
@@ -266,7 +284,8 @@ EditableCell.propTypes = {
   record: PropTypes.object,
   handleSave: PropTypes.func,
   children: PropTypes.array.isRequired,
-  validator: PropTypes.func
+  validator: PropTypes.func,
+  history: PropTypes.object
 }
 
 class EditableTable extends React.Component {
@@ -319,7 +338,8 @@ class EditableTable extends React.Component {
           dataIndex: col.dataIndex,
           title: col.title,
           handleSave: this.handleSave,
-          validator: this.props.validator
+          validator: this.props.validator,
+          history: this.props.history
         })
       }
     })
@@ -350,7 +370,8 @@ EditableTable.propTypes = {
   dataSource: PropTypes.array.isRequired,
   onChange: PropTypes.func,
   onRowClick: PropTypes.func,
-  validator: PropTypes.func.isRequired
+  validator: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired
 }
 
-export default EditableTable
+export default withRouter(EditableTable)

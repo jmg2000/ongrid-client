@@ -331,7 +331,7 @@ class Configuration extends Component {
   }
 
   render () {
-    const { curFolder, defaultProps, selectedEntity, objectsList, parentEntity } = this.state
+    const { defaultProps, selectedEntity, objectsList, parentEntity } = this.state
     const { loading, t } = this.props
 
     if (loading) {
