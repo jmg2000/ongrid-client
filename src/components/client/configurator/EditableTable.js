@@ -1,6 +1,16 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Table, Input, Form, Select, Upload, Button, Icon, Modal, message, Tabs, Popconfirm } from 'antd'
+import {
+  Table,
+  Input,
+  Form,
+  Select,
+  Upload,
+  Icon,
+  Modal,
+  Tabs,
+  Popconfirm
+} from 'antd'
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'
 
@@ -87,14 +97,36 @@ class EditableCell extends Component {
           </Select>
         )
       case 'color':
-        return <Input ref={node => (this.input = node)} type='color' onPressEnter={this.save} onBlur={this.save} />
+        return (
+          <Input
+            ref={node => (this.input = node)}
+            type='color'
+            onPressEnter={this.save}
+            onBlur={this.save}
+          />
+        )
       case 'filename':
       case 'picture':
-        return <Input ref={node => (this.input = node)} onDoubleClick={() => this.toggleUploadModal(true)} />
+        return (
+          <Input
+            ref={node => (this.input = node)}
+            onDoubleClick={() => this.toggleUploadModal(true)}
+          />
+        )
       case 'icon':
-        return <Input ref={node => (this.input = node)} onDoubleClick={() => this.toggleIconModal(true)} />
+        return (
+          <Input
+            ref={node => (this.input = node)}
+            onDoubleClick={() => this.toggleIconModal(true)}
+          />
+        )
       case 'set':
-        return <Input ref={node => (this.input = node)} onDoubleClick={() => this.showSetsModal(value)} />
+        return (
+          <Input
+            ref={node => (this.input = node)}
+            onDoubleClick={() => this.showSetsModal(value)}
+          />
+        )
       case 'template':
         return (
           <Popconfirm
@@ -102,13 +134,19 @@ class EditableCell extends Component {
             onConfirm={() => this.onEditTemplate(record)}
             okText='Yes'
             cancelText='No'
-            >
-              <Input ref={node => (this.input = node)} />
-            </Popconfirm>
+          >
+            <Input ref={node => (this.input = node)} />
+          </Popconfirm>
         )
-        
+
       default:
-        return <Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />
+        return (
+          <Input
+            ref={node => (this.input = node)}
+            onPressEnter={this.save}
+            onBlur={this.save}
+          />
+        )
     }
   }
 
@@ -131,7 +169,11 @@ class EditableCell extends Component {
         })(this.getInputByType(record, record[dataIndex]))}
       </Form.Item>
     ) : (
-      <div className='editable-cell-value-wrap' style={{ paddingRight: 24 }} onClick={this.toggleEdit}>
+      <div
+        className='editable-cell-value-wrap'
+        style={{ paddingRight: 24 }}
+        onClick={this.toggleEdit}
+      >
         {children}
       </div>
     )
@@ -192,7 +234,9 @@ class EditableCell extends Component {
 
   onEditTemplate = record => {
     console.log(record)
-    this.props.history.push(`/editor?objectid=${record.objectId}&owner=${record.owner}`)
+    this.props.history.push(
+      `/editor?objectid=${record.objectId}&owner=${record.owner}`
+    )
   }
 
   uploadFile = file => {
@@ -217,13 +261,29 @@ class EditableCell extends Component {
   }
 
   render () {
-    const { editable, dataIndex, title, record, index, handleSave, children, validator, ...restProps } = this.props
+    const {
+      editable,
+      dataIndex,
+      title,
+      record,
+      index,
+      handleSave,
+      children,
+      validator,
+      ...restProps
+    } = this.props
     const { visibleSetsModal } = this.state
 
     return (
       <React.Fragment>
         <td {...restProps}>
-          {editable ? <EditableContext.Consumer>{this.renderCell}</EditableContext.Consumer> : children}
+          {editable ? (
+            <EditableContext.Consumer>
+              {this.renderCell}
+            </EditableContext.Consumer>
+          ) : (
+            children
+          )}
         </td>
         <Modal
           title='Upload file'
@@ -241,9 +301,12 @@ class EditableCell extends Component {
             <p className='ant-upload-drag-icon'>
               <Icon type='inbox' />
             </p>
-            <p className='ant-upload-text'>Click or drag file to this area to upload</p>
+            <p className='ant-upload-text'>
+              Click or drag file to this area to upload
+            </p>
             <p className='ant-upload-hint'>
-              Support for a single or bulk upload. Strictly prohibit from uploading company data or other band files
+              Support for a single or bulk upload. Strictly prohibit from
+              uploading company data or other band files
             </p>
           </Dragger>
         </Modal>
@@ -271,7 +334,14 @@ class EditableCell extends Component {
             ))}
           </Tabs>
         </Modal>
-        {visibleSetsModal && <SetsModal visible={visibleSetsModal} onCancel={() => this.toggleSetsModal(false)} onOk={this.onOkSetsModal} initialValue={this.state.currentSet} />}
+        {visibleSetsModal && (
+          <SetsModal
+            visible={visibleSetsModal}
+            onCancel={() => this.toggleSetsModal(false)}
+            onOk={this.onOkSetsModal}
+            initialValue={this.state.currentSet}
+          />
+        )}
       </React.Fragment>
     )
   }

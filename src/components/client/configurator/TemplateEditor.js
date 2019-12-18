@@ -87,6 +87,8 @@ class TemplateEditor extends React.Component {
                 console.log(err)
                 this.setState({
                   template,
+                  fileNameProp: property,
+                  bookmarks,
                   loading: false
                 })
               })
