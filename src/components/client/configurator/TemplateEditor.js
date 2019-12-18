@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Tabs, List, Icon, Button, Popconfirm } from 'antd'
+import { Tabs, List, Icon, Button, Popconfirm, Upload } from 'antd'
 import axios from 'axios'
 import queryString from 'query-string'
 import ReactLoading from 'react-loading'
@@ -68,7 +68,9 @@ class TemplateEditor extends React.Component {
                 property = prop
               }
               if (prop.name === 'Bookmarks') {
-                bookmarks = prop.paramValue ? prop.paramValue.slice(0, -1).split(';') : []
+                bookmarks = prop.paramValue
+                  ? prop.paramValue.slice(0, -1).split(';')
+                  : []
               }
             }
             console.log(property)
@@ -165,8 +167,10 @@ class TemplateEditor extends React.Component {
     this.setState({ visible: false })
   }
 
+  handleLoadHTML = () => {}
+
   render () {
-    const { loading, changed, visible, bookmarks } = this.state
+    const { loading, changed, visible, bookmarks, template } = this.state
 
     console.log(changed)
     const setFloalaInstance = instance => {
@@ -195,6 +199,11 @@ class TemplateEditor extends React.Component {
 
     return (
       <div className='container-fluid'>
+        <div className='row TemplateEditor__TemplateName'>
+          <div className='col-sm-6'>
+            {template && `${template.name} - ${template.description}`}
+          </div>
+        </div>
         <div className='row'>
           <div className='col-sm-9'>
             <FroalaEditor
@@ -256,6 +265,20 @@ class TemplateEditor extends React.Component {
             >
               <Button type='default'>Return to Configuration editor</Button>
             </Popconfirm>
+            <Upload
+              beforeUpload={file => {
+                const reader = new FileReader()
+                reader.readAsText(file)
+                reader.onload = () => {
+                  console.log('HTML loaded!')
+                  this.setState({ file, model: reader.result.toString() })
+                }
+
+                return false
+              }}
+            >
+              <Button type='default'>Load HTML file</Button>
+            </Upload>
           </div>
         </div>
       </div>

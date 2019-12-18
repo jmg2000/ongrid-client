@@ -60,7 +60,7 @@ export class SetsModal extends Component {
         title: 'Action',
         key: 'action',
         render: (text, record) => (
-          <Button type='danger' onClick={() => this.handleDeleleValue(record.key)}>
+          <Button type='danger' size='small' onClick={() => this.handleDeleleValue(record.key)}>
             Delete
           </Button>
         )
